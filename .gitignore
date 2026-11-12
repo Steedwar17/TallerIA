@@ -1,0 +1,28 @@
+# Variables de entorno y secretos (¡CRÍTICO: nunca subir el .env real!)
+.env
+.env.local
+.env.*.local
+
+# Entornos virtuales
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache y compilados
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Archivos de sistema / IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
