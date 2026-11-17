@@ -102,26 +102,23 @@ triaje-neuro-agentico/
 
 ## 1.3 Propuesta de Valor del Sistema Neuro-Agéntico
 
-> ### [ESCRIBE AQUÍ (equipo)] — Justificación y Propuesta de Valor
->
-> **Preguntas guía para la redacción del equipo:**
-> - ¿Qué ventajas operativas y de costos ofrece nuestra red neuronal local (`GlobalAveragePooling1D`) frente a delegar cada clasificación de sentimiento a un LLM comercial vía prompt?
-> - ¿Cómo garantizamos la reproducibilidad y calibración de probabilidad con una inferencia determinista en ~15 ms frente a la variabilidad de un LLM?
-> - ¿Qué capacidades aporta el agente ReAct que la red neuronal por sí sola no puede resolver (consulta dinámica de políticas, escalamiento, contextualización y memoria de diálogo)?
-> - ¿Qué cifras concretas del proyecto respaldan esta sinergia (ej. exactitud de 86.50% de la red local, 100% de cumplimiento en la trayectoria del agente y ahorro del 33.9% en tokens)?
->
-> *(Redacten aquí la justificación con sus propias palabras)*
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Justificación y Propuesta de Valor
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué ventajas operativas y de costos ofrece nuestra red neuronal local (`GlobalAveragePooling1D`) frente a delegar cada clasificación de sentimiento a un LLM comercial vía prompt?
+- ¿Cómo garantizamos la reproducibilidad y calibración de probabilidad con una inferencia determinista en ~15 ms frente a la variabilidad de un LLM?
+- ¿Qué capacidades aporta el agente ReAct que la red neuronal por sí sola no puede resolver (consulta dinámica de políticas, escalamiento, contextualización y memoria de diálogo)?
+- ¿Qué cifras concretas del proyecto respaldan esta sinergia (ej. exactitud de 86.50% de la red local, 100% de cumplimiento en la trayectoria del agente y ahorro del 33.9% en tokens)?
+
+</details>
 
 ---
 
 # Sección 2 · Arquitectura del Sistema (Diagrama Propio)
 
 ## 2.1 Diagrama de Arquitectura
-
-> **ESTADO DEL DIAGRAMA:** `BORRADOR PARA AJUSTAR POR EL EQUIPO`  
-> **Decisiones de diseño para revisión del equipo:**
-> 1. Verificar si la separación modular entre la interfaz Streamlit y el agente refleja fielmente el aislamiento de paneles.
-> 2. Confirmar que la cadena de llamadas entre el agente, la `@tool #1` y los pesos `.keras` documenta adecuadamente el tiempo de inferencia local.
 
 ![Arquitectura del Sistema](assets/diagramas/arquitectura.png)
 
@@ -183,13 +180,18 @@ flowchart TD
 
 ## 2.3 Explicación de la Arquitectura
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Explicación de la Arquitectura
-> **Preguntas guía para tu redacción:**
-> - ¿Cómo interactúan el agente ReAct, la red neuronal local y las políticas internas ante una reseña ambigua?
-> - ¿Por qué la inferencia de la red neuronal se encapsula en una `@tool` y no se conecta directamente al frontend?
-> - ¿De qué manera la memoria (`MemorySaver`) previene re-ejecutar herramientas costosas en turnos consecutivos?
->
-> *(Redacta aquí tu explicación con tus propias palabras)*
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Explicación de la Arquitectura
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Cómo interactúan el agente ReAct, la red neuronal local y las políticas internas ante una reseña ambigua?
+- ¿Por qué la inferencia de la red neuronal se encapsula en una `@tool` y no se conecta directamente al frontend?
+- ¿De qué manera la memoria (`MemorySaver`) previene re-ejecutar herramientas costosas en turnos consecutivos?
+- Verificar si la separación modular entre la interfaz Streamlit y el agente refleja fielmente el aislamiento de paneles.
+- Confirmar que la cadena de llamadas entre el agente, la `@tool #1` y los pesos `.keras` documenta adecuadamente el tiempo de inferencia local.
+
+</details>
 
 ---
 
@@ -211,11 +213,16 @@ flowchart TD
 | Reseñas de `train_final` truncadas | 4,96% |
 | `SEED` | 42 |
 
-> **ESCRIBE AQUÍ (Steedwar)**
->
-> - ¿Por qué elegimos `SEQ_LEN=585` al observar p95=585,0, mediana=172 y máximo=2.459?
-> - ¿Qué implica que el 4,96% de `train_final` se trunque?
-> - ¿Qué evidencia del notebook respalda que el ajuste del vocabulario usó solo `train_final`?
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis de datos y preprocesamiento
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Por qué elegimos `SEQ_LEN=585` al observar p95=585,0, mediana=172 y máximo=2.459?
+- ¿Qué implica que el 4,96% de `train_final` se trunque?
+- ¿Qué evidencia del notebook respalda que el ajuste del vocabulario usó solo `train_final`?
+
+</details>
 
 ## 3.2 Arquitectura e hiperparámetros
 
@@ -230,11 +237,16 @@ flowchart TD
 | Batch / épocas | 64 / 10 | 64 / 10 |
 | Parámetros totales | 640.545 | 640.545 |
 
-> **ESCRIBE AQUÍ (Steedwar)**
->
-> - ¿Qué ruta siguen los datos desde la secuencia de 585 tokens hasta la salida sigmoide?
-> - ¿Qué cambió exactamente entre ambos modelos y qué permaneció constante?
-> - ¿Por qué los dos modelos tienen 640.545 parámetros pese a incorporar Dropout?
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis de la arquitectura e hiperparámetros
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué ruta siguen los datos desde la secuencia de 585 tokens hasta la salida sigmoide?
+- ¿Qué cambió exactamente entre ambos modelos y qué permaneció constante?
+- ¿Por qué los dos modelos tienen 640.545 parámetros pese a incorporar Dropout?
+
+</details>
 
 ## 3.3 Curvas de entrenamiento vs. validación
 
@@ -242,11 +254,16 @@ flowchart TD
 
 ![Curvas de accuracy, base vs. mejorado](assets/curvas_accuracy_base_vs_mejorado.png)
 
-> **ESCRIBE AQUÍ (Steedwar)**
->
-> - ¿En qué época se separan las curvas de `loss` del modelo base y qué valores de la tabla lo muestran?
-> - ¿Cómo cambió la brecha de accuracy entrenamiento-validación de 0,1054 a 0,0863?
-> - ¿Qué muestran las épocas 4 y 10 para cada modelo?
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis de las curvas de entrenamiento vs. validación
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿En qué época se separan las curvas de `loss` del modelo base y qué valores de la tabla lo muestran?
+- ¿Cómo cambió la brecha de accuracy entrenamiento-validación de 0,1054 a 0,0863?
+- ¿Qué muestran las épocas 4 y 10 para cada modelo?
+
+</details>
 
 ## 3.4 Comparación en el conjunto de prueba
 
@@ -264,11 +281,16 @@ flowchart TD
 | Modelo base | `[[11010, 1490], [2020, 10480]]` |
 | Modelo mejorado | `[[11149, 1351], [2024, 10476]]` |
 
-> **ESCRIBE AQUÍ (Steedwar)**
->
-> - ¿Qué diferencia observas entre las métricas de prueba 0,8596 y 0,8650?
-> - ¿Qué celdas de las dos matrices conviene contrastar para la decisión de triaje?
-> - ¿Qué relación tienen las matrices con los 3.375 errores del mejorado?
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis de la comparación en el conjunto de prueba
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué diferencia observas entre las métricas de prueba 0,8596 y 0,8650?
+- ¿Qué celdas de las dos matrices conviene contrastar para la decisión de triaje?
+- ¿Qué relación tienen las matrices con los 3.375 errores del mejorado?
+
+</details>
 
 ## 3.5 Análisis de un fallo real
 
@@ -284,11 +306,16 @@ flowchart TD
 | Fragmento literal | `Primary plot!Primary direction!Poor interpretation.` |
 | Fuente | `notebooks/entrenamiento_u4.ipynb`, celda 58 |
 
-> **ESCRIBE AQUÍ (Steedwar)**
->
-> - ¿Qué palabras o estructura del texto de cuatro palabras pudieron confundir al modelo?
-> - ¿Cómo se relacionan la predicción positiva 1,000000 y el valor real negativo?
-> - ¿Por qué este caso exige discutir la confianza además de la etiqueta predicha?
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis del fallo real
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué palabras o estructura del texto de cuatro palabras pudieron confundir al modelo?
+- ¿Cómo se relacionan la predicción positiva 1,000000 y el valor real negativo?
+- ¿Por qué este caso exige discutir la confianza además de la etiqueta predicha?
+
+</details>
 
 ---
 
@@ -336,12 +363,15 @@ El agente dispone de dos herramientas especializadas con responsabilidades no su
        """
    ```
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Análisis de Diseño de Herramientas
-> **Preguntas guía para tu redacción:**
-> - ¿Qué garantiza que la `@tool #1` no se ejecute dos veces sobre la misma reseña dentro de una misma conversación?
-> - ¿Por qué la `@tool #2` acepta `sentimiento` y `confianza` opcionales en lugar de obligar al agente a inferirlos siempre?
->
-> *(Redacta aquí tu explicación con tus propias palabras)*
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Análisis de Diseño de Herramientas
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué garantiza que la `@tool #1` no se ejecute dos veces sobre la misma reseña dentro de una misma conversación?
+- ¿Por qué la `@tool #2` acepta `sentimiento` y `confianza` opcionales en lugar de obligar al agente a inferirlos siempre?
+
+</details>
 
 ---
 
@@ -349,13 +379,16 @@ El agente dispone de dos herramientas especializadas con responsabilidades no su
 
 Los docstrings actúan como el manual de operaciones del planificador del LLM. Su diseño optimizado incluye directrices explícitas de activación positiva (`Usala:`) y exclusión negativa (`NO usar:`).
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Impacto Operativo de los Docstrings
-> **Preguntas guía para tu redacción:**
-> - ¿Qué frase exacta del docstring de la `@tool #1` impidió que el modelo la invocara durante el saludo del Caso 1?
-> - ¿Qué ajuste realizamos entre la Tarea 6 y la Tarea 8 para evitar que el agente alucinara llamadas duplicadas?
-> - ¿Cómo influyó la reducción de tokens en los docstrings sobre el consumo total de contexto en turnos multi-llamada?
->
-> *(Redacta aquí tu explicación con tus propias palabras)*
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Impacto Operativo de los Docstrings
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué frase exacta del docstring de la `@tool #1` impidió que el modelo la invocara durante el saludo del Caso 1?
+- ¿Qué ajuste realizamos entre la Tarea 6 y la Tarea 8 para evitar que el agente alucinara llamadas duplicadas?
+- ¿Cómo influyó la reducción de tokens en los docstrings sobre el consumo total de contexto en turnos multi-llamada?
+
+</details>
 
 ---
 
@@ -395,13 +428,16 @@ if st.button("🔄 Reiniciar conversación", help="Genera un nuevo thread_id y v
     st.rerun()
 ```
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Explicación de la Memoria y Reinicio
-> **Preguntas guía para tu redacción:**
-> - ¿Cómo demostramos empíricamente en la prueba D y E que el agente recuerda en el mismo `thread_id` y olvida al reiniciarlo?
-> - ¿Por qué almacenar el agente en `@st.cache_resource` es seguro entre múltiples usuarios que acceden simultáneamente?
-> - ¿Qué papel cumple `trim_messages` en evitar desbordamientos de contexto en conversaciones largas?
->
-> *(Redacta aquí tu explicación con tus propias palabras)*
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Explicación de la Memoria y Reinicio
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Cómo demostramos empíricamente en la prueba D y E que el agente recuerda en el mismo `thread_id` y olvida al reiniciarlo?
+- ¿Por qué almacenar el agente en `@st.cache_resource` es seguro entre múltiples usuarios que acceden simultáneamente?
+- ¿Qué papel cumple `trim_messages` en evitar desbordamientos de contexto en conversaciones largas?
+
+</details>
 
 ---
 
@@ -430,13 +466,16 @@ Para operar de forma sostenible dentro de la capa gratuita de Google AI Studio (
 | **Caso 3: Reseña completa** | 3,835 / 199 / 4,034 | 2,420 / 159 / 2,579 | **36.1%** |
 | **TOTAL SUITE (3 turnos)** | **6,680 / 445 / 7,125** | **4,386 / 326 / 4,712** | **33.9%** |
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Justificación de las Medidas de Ahorro
-> **Preguntas guía para tu redacción:**
-> - ¿Cuál medida de ahorro tuvo el mayor impacto cuantitativo y por qué?
-> - ¿Cómo logramos recortar el 65.6% del system prompt sin comprometer ninguna de las 6 reglas de comportamiento?
-> - ¿Por qué era crítico configurar `allow_partial=False` en el recorte de historial para la API de Gemini?
->
-> *(Redacta aquí tu explicación con tus propias palabras)*
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Justificación de las Medidas de Ahorro
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Cuál medida de ahorro tuvo el mayor impacto cuantitativo y por qué?
+- ¿Cómo logramos recortar el 65.6% del system prompt sin comprometer ninguna de las 6 reglas de comportamiento?
+- ¿Por qué era crítico configurar `allow_partial=False` en el recorte de historial para la API de Gemini?
+
+</details>
 
 ---
 
@@ -455,13 +494,16 @@ Resultados reproducibles extraídos de [notebooks/evaluacion_agente_u5.ipynb](no
 - **Casos con resultado correcto sobre el total:** 4 de 4 (**100.0%**)
 - **Validación de trayectoria:** Determinada exclusivamente desde `AIMessage.tool_calls` a través de `herramientas_invocadas` en `src/agente.py` y verificada en `src/evaluacion.py`. Cero inspecciones sobre la respuesta final de texto.
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Análisis de la Matriz de Evaluación
-> **Preguntas guía para tu redacción:**
-> - ¿Qué demuestra que el Caso 1 no active herramientas y el Caso 2 active solo la de políticas?
-> - ¿Cómo se garantiza en el Caso 3 que los argumentos de la `@tool #2` coincidan exactamente con la inferencia de la red local?
-> - En el Caso 4, ¿por qué fue fundamental que el sistema comunicara la baja confianza (0.5835) y derivara a moderación humana en lugar de automatizar una decisión errónea?
->
-> *(Redacta aquí tu explicación con tus propias palabras)*
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Análisis de la Matriz de Evaluación
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué demuestra que el Caso 1 no active herramientas y el Caso 2 active solo la de políticas?
+- ¿Cómo se garantiza en el Caso 3 que los argumentos de la `@tool #2` coincidan exactamente con la inferencia de la red local?
+- En el Caso 4, ¿por qué fue fundamental que el sistema comunicara la baja confianza (0.5835) y derivara a moderación humana en lugar de automatizar una decisión errónea?
+
+</details>
 
 ---
 
@@ -493,81 +535,87 @@ Registro unificado de incidencias, errores de librerías, APIs desactualizadas y
 
 ![Claude: prompt actualizado de la Tarea 17](assets/vibe_coding/03_claude_prompt_tarea17_actualizado.png)
 
-- Descripción pendiente de redactar.
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — descripción de la evidencia de uso de IA del modelo (Tareas 3, 5, 9 y 15)
+
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la evidencia de uso de IA del agente (Tareas 6, 10, 12 y 16)
 
 ---
 
 ## 5.3 Reflexiones del Equipo
 
-> ### [ESCRIBE AQUÍ (Steedwar)] — Reflexión Crítica sobre el Modelado y Vibe Coding
-> **Preguntas guía para tu redacción:**
-> - ¿Qué precauciones técnicas se deben tener al usar asistentes de IA para el entrenamiento y exportación de modelos en Keras 3?
-> - ¿Cómo afectó la incompatibilidad de tipos `dtype=object` la fase de inferencia y cómo se detectó?
->
-> *(Redacta aquí tu reflexión crítica personal con tus propias palabras)*
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Reflexión Crítica sobre el Modelado y Vibe Coding
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Reflexión Crítica sobre el Agente y Vibe Coding
-> **Preguntas guía para tu redacción:**
-> - ¿Por qué la supervisión humana y las pruebas automatizadas con asserts estrictos fueron indispensables para detectar los errores de la IA?
-> - ¿Qué riesgos habría implicado aceptar ciegamente la propuesta de modelo `gemini-2.0-flash` o el parche incorrecto de `AppTest`?
->
-> *(Redacta aquí tu reflexión crítica personal con tus propias palabras)*
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué precauciones técnicas se deben tener al usar asistentes de IA para el entrenamiento y exportación de modelos en Keras 3?
+- ¿Cómo afectó la incompatibilidad de tipos `dtype=object` la fase de inferencia y cómo se detectó?
+
+</details>
+
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Reflexión Crítica sobre el Agente y Vibe Coding
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Por qué la supervisión humana y las pruebas automatizadas con asserts estrictos fueron indispensables para detectar los errores de la IA?
+- ¿Qué riesgos habría implicado aceptar ciegamente la propuesta de modelo `gemini-2.0-flash` o el parche incorrecto de `AppTest`?
+
+</details>
 
 ---
 
 # Sección 6 · Demostración de la Interfaz (Streamlit)
 
-_(introducción pendiente de redactar)_
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — introducción de la Sección 6
 
 ## Galería de Evidencias de la Aplicación
 
 ### 1. Inferencia Neuronal: Reseña Positiva Clara
 ![Clasificación de reseña positiva](assets/capturas/panel_neuronal/01_resena_positiva.png)
-*Figura 6.1:* _(descripción pendiente de redactar)_
+*Figura 6.1:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
 ### 2. Inferencia Neuronal: Reseña Negativa Clara
 ![Clasificación de reseña negativa](assets/capturas/panel_neuronal/02_resena_negativa.png)
-*Figura 6.2:* _(descripción pendiente de redactar)_
+*Figura 6.2:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
 ### 3. Inferencia Neuronal: Detección de Baja Confianza (Caso B)
 ![Clasificación con baja confianza](assets/capturas/panel_neuronal/03_baja_confianza_caso_b.png)
-*Figura 6.3:* _(descripción pendiente de redactar)_
+*Figura 6.3:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
 ### 4. Fallo Real (Caso A): Predicción Positiva con Confianza Máxima
 ![Caso A en el panel neuronal](assets/capturas/panel_neuronal/04_fallo_real_caso_a.png)
-*Figura 6.4:* _(descripción pendiente de redactar)_
+*Figura 6.4:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
 ### 5. Agente — Caso 1: Saludo sin Herramientas
 ![Caso 1 del agente](assets/capturas/agente/01_caso1_saludo_sin_herramientas.png)
-*Figura 6.5:* _(descripción pendiente de redactar)_
+*Figura 6.5:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
 ### 6. Agente — Caso 2: Solo Consulta de Política
 ![Caso 2 del agente](assets/capturas/agente/02_caso2_solo_politica.png)
-*Figura 6.6:* _(descripción pendiente de redactar)_
+*Figura 6.6:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
 ### 7. Agente — Caso 3: Triaje de Reseña Negativa (Clasificación → Política)
 ![Caso 3 del agente](assets/capturas/agente/03_caso3_clasificacion_y_politica.png)
-*Figura 6.7:* _(descripción pendiente de redactar)_
+*Figura 6.7:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
 ### 8. Agente — Caso 4: Reseña de Baja Confianza (Revisión Humana)
 ![Caso 4 del agente](assets/capturas/agente/04_caso4_baja_confianza.png)
-*Figura 6.8:* _(descripción pendiente de redactar)_
+*Figura 6.8:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
 ### 9. Agente — Memoria dentro del Mismo Hilo
 ![Memoria en el mismo thread_id](assets/capturas/agente/05_memoria_mismo_hilo.png)
-*Figura 6.9:* _(descripción pendiente de redactar)_
+*Figura 6.9:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
 ### 10. Agente — Aislamiento de Memoria tras Reiniciar la Conversación
 ![Sin contexto tras el reinicio](assets/capturas/agente/06_memoria_tras_reinicio.png)
-*Figura 6.10:* _(descripción pendiente de redactar)_
+*Figura 6.10:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
 ---
 
 ## Video Demostrativo
 
-> ⚠️ **Video Demostrativo del Sistema:**  
-> **[ENLACE AL VIDEO DEMOSTRATIVO (YouTube / Google Drive)]()**  
-> *(Nota: El enlace se incorporará con permisos públicos de visualización sin requerir inicio de sesión).*
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — enlace del video demostrativo (YouTube no listado o Google Drive, máx. 3 min)
 
 ---
 
