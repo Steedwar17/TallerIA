@@ -20,3 +20,9 @@
 - **Por qué estaba mal:** El agente ejecutaba correctamente la trayectoria `@tool #1` -> `@tool #2`, pero en la respuesta final omitía redactar explícitamente el sentimiento predicho ("negativo"), fallando el assert de coherencia de datos del Requisito 9.
 - **Corrección:** Se ajustó la Regla 5 del system prompt para exigir explícitamente: *"menciona el sentimiento y confianza detectados, prioridad, accion y pauta"*.
 - **Captura:** en `assets/vibe_coding/`.
+
+## Episodio 4 — 2026-11-17 — Tarea 12 (src/prueba_app_agent.py - Juan Diego)
+- **Qué propuse:** Parchear con `@patch("app_agent.responder")` en las pruebas unitarias de `AppTest`.
+- **Por qué estaba mal:** `streamlit.testing.v1.AppTest` ejecuta el script compilando el código fuente en un hilo aislado que importa `responder` directamente desde `src.agente`, por lo que el parche sobre el namespace de `app_agent` no era interceptado y el test realizaba llamadas reales a la API de Google AI Studio, violando el aislamiento sin cuota.
+- **Corrección:** Se parcheó el objeto directamente en su módulo origen mediante `patch.object(src.agente, "responder")`, logrando la intercepción transparente del mock en `AppTest` sin consumir llamadas reales.
+- **Captura:** en `assets/vibe_coding/`.

@@ -299,9 +299,11 @@ def responder(agente, texto: str, thread_id: str) -> Dict[str, Any]:
     if tot_tok == 0 and (inp_tok + out_tok) > 0:
         tot_tok = inp_tok + out_tok
 
+    tools_usadas = herramientas_invocadas(msgs_turno)
     return {
         "respuesta": respuesta,
-        "tools_invocadas": herramientas_invocadas(msgs_turno),
+        "tools_invocadas": tools_usadas,
+        "herramientas": tools_usadas,
         "input_tokens": inp_tok,
         "output_tokens": out_tok,
         "total_tokens": tot_tok,
