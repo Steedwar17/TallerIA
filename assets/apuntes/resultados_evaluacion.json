@@ -1,0 +1,62 @@
+[
+  {
+    "nombre": "Caso 1",
+    "entrada": "Hola, ¿qué puedes hacer por mí?",
+    "esperadas": [],
+    "invocadas": [],
+    "trayectoria_ok": true,
+    "resultado_ok": true,
+    "detalle_resultado": "respuesta no vacía, sin ToolMessage y sin clasificación inventada",
+    "respuesta": "¡Hola! Puedo ayudarte a clasificar reseñas de streaming (positivas o negativas) usando un modelo local y consultar las políticas internas de triaje y protocolo de respuesta para cada caso. \n\nPuedes enviarme el texto de una reseña en inglés para comenzar.",
+    "tokens": 609
+  },
+  {
+    "nombre": "Caso 2",
+    "entrada": "¿Qué política debo aplicar si un cliente amenaza con acciones legales en su reseña?",
+    "esperadas": [
+      "consultar_politica_triaje"
+    ],
+    "invocadas": [
+      "consultar_politica_triaje"
+    ],
+    "trayectoria_ok": true,
+    "resultado_ok": true,
+    "detalle_resultado": "pol_id 'POL_NEG' del ToolMessage aparece en la respuesta",
+    "respuesta": "Para una reseña con amenaza de acciones legales, aplica la política **POL_NEG**:\n\n- **Sentimiento:** Negativo\n- **Confianza:** 1.0\n- **Prioridad:** ALTA\n- **Acción:** Ticket de insatisfacción (escalamiento legal/soporte senior)\n- **Pauta:** Empatizar con el malestar, agradecer la franqueza y ofrecer soporte directo evitando confrontaciones.",
+    "tokens": 1365
+  },
+  {
+    "nombre": "Caso 3",
+    "entrada": "Haz el triaje de esta reseña de un cliente: \"Widow hires a psychopath as a handyman. Sloppy film noir thriller which doesn't make much of its tension promising set-up. (3/10)\"",
+    "esperadas": [
+      "clasificar_sentimiento_resena",
+      "consultar_politica_triaje"
+    ],
+    "invocadas": [
+      "clasificar_sentimiento_resena",
+      "consultar_politica_triaje"
+    ],
+    "trayectoria_ok": true,
+    "resultado_ok": true,
+    "detalle_resultado": "Sentimiento \"negativo\" y politica/accion (POL_NEG/Ticket de insatisfaccion) presentes en respuesta",
+    "respuesta": "- **Sentimiento:** Negativo\n- **Confianza:** 1.0 (100%)\n- **Política ID:** POL_NEG - **Prioridad:** ALTA\n- **Acción:** Ticket de insatisfacción\n- **Pauta:** Empatizar con malestar, agradecer franqueza y ofrecer soporte directo.",
+    "tokens": 2230
+  },
+  {
+    "nombre": "Caso 4",
+    "entrada": "Haz el triaje de esta reseña de un cliente: \"Not bad, but not great either. It sits right in the middle.\"",
+    "esperadas": [
+      "clasificar_sentimiento_resena",
+      "consultar_politica_triaje"
+    ],
+    "invocadas": [
+      "clasificar_sentimiento_resena",
+      "consultar_politica_triaje"
+    ],
+    "trayectoria_ok": true,
+    "resultado_ok": true,
+    "detalle_resultado": "Confianza 0.5835 coincide con fallo_real.md y revision humana comunicada",
+    "respuesta": "- **Sentimiento:** Negativo\n- **Confianza:** 0.58 (Baja confianza < 0.70)\n- **Política aplicada:** POL_REV\n- **Prioridad:** MEDIA\n- **Acción:** Derivar a moderación\n- **Pauta:** Solicitar cortésmente mayor detalle o clarificación al usuario.",
+    "tokens": 2130
+  }
+]
