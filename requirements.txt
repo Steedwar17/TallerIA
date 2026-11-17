@@ -1,9 +1,18 @@
-streamlit
-langchain
-langgraph
-langchain-google-genai
-google-genai
-tensorflow
-python-dotenv
-datasets
+# requirements.txt — Dependencias fijadas y verificadas para el proyecto
+# Python compatible: 3.10 - 3.14
 
+streamlit==1.58.0
+tensorflow==2.22.0rc1
+langchain==1.5.0
+langgraph==1.2.22
+langchain-google-genai==4.5.0
+langchain-core==1.8.1
+python-dotenv==1.2.1
+pandas==3.0.3
+numpy==2.4.6
+scikit-learn==1.9.0
+datasets==5.2.0
+nbformat==5.10.4
+nbconvert==7.17.1
+matplotlib==3.11.0
+tabulate==0.10.0
