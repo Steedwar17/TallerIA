@@ -60,54 +60,13 @@ SYSTEM_PROMPT_COMPACTO = (
     "2. Resena en ingles no clasificada: usa clasificar_sentimiento_resena.\n"
     "3. Con sentimiento o al pedir directriz: usa consultar_politica_triaje.\n"
     "4. Si confianza < 0.70 o incierto: aplica politica POL_REV.\n"
-    "5. Con la salida de tools: indica prioridad, accion y pauta de forma concisa.\n"
-    "6. Responde breve y profesional; sin relleno ni repetir el texto analizado."
+    "5. Con la salida de tools: menciona el sentimiento y confianza detectados, prioridad, accion y pauta.\n"
+    "6. Responde breve y estructurado; sin relleno ni repetir el texto analizado."
 )
 
 
-# ===========================================================================
-# @tool #1 PROVISIONAL (para Tarea 8 — límite duro 120 chars)
-# ===========================================================================
-
-@tool
-def clasificar_sentimiento_resena(texto: str) -> str:
-    """Clasifica sentimiento de resena en ingles usando red neuronal.
-
-    Usala: usuario entrega texto de resena para clasificar.
-    NO usar: saludos, preguntas de politicas o texto ya clasificado.
-
-    Args:
-        texto: resena literal en ingles.
-
-    Returns:
-        JSON (max 120 chars) con sentimiento, confianza y baja_confianza.
-    """
-    t = (texto or "").strip()[:MAX_CARACTERES_RESENA].lower()
-    if not t:
-        salida = json.dumps({"error": "Texto vacio"}, separators=(",", ":"))
-        assert len(salida) <= 120
-        return salida
-
-    malas = ["terrible", "bad", "awful", "boring", "worst", "waste", "horrible", "poor", "hate", "malo"]
-    buenas = ["great", "good", "excellent", "amazing", "wonderful", "love", "best", "brilliant", "superb"]
-    c_mal = sum(1 for w in malas if w in t)
-    c_bien = sum(1 for w in buenas if w in t)
-
-    if c_mal > c_bien:
-        sent, conf = "negativo", 0.96
-    elif c_bien > c_mal:
-        sent, conf = "positivo", 0.94
-    else:
-        sent, conf = "incierto", 0.52
-
-    baja_conf = conf < 0.70
-    salida = json.dumps(
-        {"sentimiento": sent, "confianza": conf, "baja_confianza": baja_conf},
-        ensure_ascii=False,
-        separators=(",", ":"),
-    )
-    assert len(salida) <= 120, f"Tool 1 excede 120 chars: {len(salida)}"
-    return salida
+from src.tool_sentimiento import clasificar_sentimiento_resena
+from src.tool_politicas import consultar_politica_triaje
 
 
 # ===========================================================================
@@ -347,6 +306,7 @@ def responder(agente, texto: str, thread_id: str) -> Dict[str, Any]:
         "output_tokens": out_tok,
         "total_tokens": tot_tok,
         "num_llamadas_modelo": llamadas_modelo,
+        "mensajes": msgs_turno,
     }
 
 

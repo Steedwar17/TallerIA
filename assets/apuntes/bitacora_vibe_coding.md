@@ -15,6 +15,8 @@
 - **Corrección:** Se configuró el modelo vigente `gemini-3.5-flash-lite` y se implementó un extractor normalizador en `src/agente.py:responder()` que concatena los bloques `text` de la lista de contenido devuelta por el modelo. Verificado con `src/prueba_agente.py`.
 - **Captura:** en `assets/vibe_coding/`.
 
-## Registro Tarea 8 — Medidas de Ahorro de Tokens (Juan Diego)
-- **Ejecución:** Se verificó previamente la sintaxis de `langchain_core.rate_limiters.InMemoryRateLimiter` y de `langchain_core.messages.trim_messages` en la documentación oficial.
-- **Resultado:** La implementación de límites de salida, recorte de historial, limitador de tasa y contracción de system prompt/docstrings ejecutó de forma limpia en el primer intento, alcanzando un 40.1% de ahorro sin excepciones ni errores de secuencia.
+## Episodio 3 — 2026-11-17 — Tarea 10 (src/agente.py - Juan Diego)
+- **Qué propuse:** Regla 5 del system prompt que solo indicaba *"indica prioridad, accion y pauta de forma concisa"*.
+- **Por qué estaba mal:** El agente ejecutaba correctamente la trayectoria `@tool #1` -> `@tool #2`, pero en la respuesta final omitía redactar explícitamente el sentimiento predicho ("negativo"), fallando el assert de coherencia de datos del Requisito 9.
+- **Corrección:** Se ajustó la Regla 5 del system prompt para exigir explícitamente: *"menciona el sentimiento y confianza detectados, prioridad, accion y pauta"*.
+- **Captura:** en `assets/vibe_coding/`.

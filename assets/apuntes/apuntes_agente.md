@@ -23,7 +23,7 @@ Documento de hechos técnicos verificados en código y ejecución real para la S
   ```
 - **Tokens medidos (`gemini-3.5-flash-lite`):** Reducción de **118 tokens** (base) a **80 tokens** (optimizado) -> **32.2% de ahorro**.
 - **Qué se cambió y motivo observado:** Se eliminó texto narrativo superfluo ("Ejecuta la red neuronal local entrenada con reseñas IMDB..."). Se estructuró en cláusulas operativas directas `Usala:` y `NO usar:` para que el planificador LLM reconozca de inmediato las precondiciones de activación sin consumir tokens de contexto en cada invocación.
-- **[PENDIENTE TAREA 10]:** Esta herramienta opera con la versión provisional compacta de la Tarea 8. En la Tarea 10 se conectará con `src/tool_sentimiento.py` entregada por Steedwar en la Tarea 9 (`models/sentimiento_imdb.keras`).
+- **[COMPLETADO EN TAREA 10]:** Conectada con `src/tool_sentimiento.py` entregada por Steedwar en la Tarea 9 (`models/sentimiento_imdb.keras`). Docstring real en `src/tool_sentimiento.py:16-29` y límite duro de 120 caracteres en `src/tool_sentimiento.py:44`. Pruebas de integración superadas (6/6).
 
 ### 2. `@tool` #2: `consultar_politica_triaje`
 - **Texto final implementado:**
@@ -82,3 +82,20 @@ Documento de hechos técnicos verificados en código y ejecución real para la S
 | 8 | **Límite de ritmo (`InMemoryRateLimiter`)** | `src/agente.py:126` | **0.25 req/seg** (15 RPM gratuito) para evitar reintentos HTTP 429 |
 | 9 | **Tope de entrada de usuario (`MAX_CARACTERES_RESENA`)** | `src/config.py:14`, `src/agente.py:233` | Truncado defensivo a **4000 caracteres** |
 | 10 | **Ahorro total medido en suite de 3 casos reales** | `assets/apuntes/medicion_tokens.md` | De **7,116** a **4,263 tokens** (**40.1% de ahorro global**) |
+
+---
+
+## (d) Integración del Agente con Red Neuronal y Políticas (Tarea 10)
+
+- **Herramientas enlazadas en `src/herramientas.py:obtener_tools()`:**
+  - `@tool #1` `clasificar_sentimiento_resena` (modelo real `models/sentimiento_imdb.keras`).
+  - `@tool #2` `consultar_politica_triaje` (protocolos internos de triaje).
+- **Pruebas de integración automatizadas (`src/prueba_integracion.py`):**
+  - **Prueba A (saludo):** 0 tools invocadas (`[]`).
+  - **Prueba B (consulta política):** solo `['consultar_politica_triaje']`.
+  - **Prueba C (triaje completo con reseña negativa real):** `['clasificar_sentimiento_resena', 'consultar_politica_triaje']`. Verificada por código la coherencia exacta de argumentos y predicción.
+  - **Prueba D (memoria en mismo hilo):** responde la confianza previa sin volver a invocar tools.
+  - **Prueba E (reinicio de hilo):** con nuevo `thread_id`, `get_state()` está vacío y no tiene conocimiento previo.
+  - **Prueba F (baja confianza / fallo real):** detecta baja certeza (0.58 < 0.70) y aplica política de revisión humana (`POL_REV`).
+- **Consumo:** 11 llamadas totales al LLM en la suite completa (límite: 20).
+- **Reporte completo:** [prueba_integracion.md](file:///c:/Users/USUARIO/Documents/Inteligencia%20Artificial/TallerIA/assets/apuntes/prueba_integracion.md).
