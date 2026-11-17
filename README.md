@@ -137,7 +137,7 @@ flowchart TD
 
     subgraph Agente ["Agente de Triaje (src/agente.py)"]
         LLM["Modelo Gemini: gemini-3.5-flash-lite\n(ChatGoogleGenerativeAI, temp=0, max_tokens=512)"]
-        Graph["Grafo ReAct (create_react_agent)"]
+        Graph["Agente ReAct (create_agent)"]
         Trimmer["Recorte de historial (trim_messages, max=8)"]
         Prompt["System Prompt Compacto (6 reglas de triaje)"]
     end
@@ -366,11 +366,12 @@ La memoria conversacional del agente se gestiona a través de un checkpointer vo
 ### 1. Creación del Checkpointer y Compilación del Agente ([src/agente.py](src/agente.py))
 ```python
 checkpointer = MemorySaver()
-agente = create_react_agent(
+agente = create_agent(
     model=llm,
     tools=tools,
+    system_prompt=SYSTEM_PROMPT_COMPACTO,
+    middleware=[crear_middleware_recorte(MAX_MENSAJES_HISTORIAL)],
     checkpointer=checkpointer,
-    prompt=crear_prompt_modifier(SYSTEM_PROMPT_COMPACTO),
 )
 ```
 
@@ -484,6 +485,14 @@ Registro unificado de incidencias, errores de librerías, APIs desactualizadas y
 - Gemini integrado en Google Docs (Tarea 1, carga del dataset): [assets/vibe_coding/gemini_google_docs_tarea1.md](assets/vibe_coding/gemini_google_docs_tarea1.md)
 - Plan del agente de Antigravity, Tarea 13: [assets/vibe_coding/plan_antigravity_tarea13.md](assets/vibe_coding/plan_antigravity_tarea13.md)
 - Plan del agente de Antigravity, verificación Tarea 19: [assets/vibe_coding/plan_antigravity_verificacion_tarea19.md](assets/vibe_coding/plan_antigravity_verificacion_tarea19.md)
+- Capturas de la conversación con Claude (generación y ajuste de los prompts de las tareas):
+
+![Claude: prompts por tarea](assets/vibe_coding/01_claude_prompts_por_tarea.png)
+
+![Claude: prompts de la Tarea 19 y revisión](assets/vibe_coding/02_claude_prompts_tarea19_y_revision.png)
+
+![Claude: prompt actualizado de la Tarea 17](assets/vibe_coding/03_claude_prompt_tarea17_actualizado.png)
+
 - Descripción pendiente de redactar.
 
 ---

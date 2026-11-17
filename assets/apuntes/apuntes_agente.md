@@ -57,7 +57,7 @@ Documento de hechos técnicos verificados en código y ejecución real para la S
   - Función `config_sesion(thread_id)` (`src/agente.py:105`): inyecta `{"configurable": {"thread_id": thread_id}}` en el runtime de LangGraph.
   - Al generar un nuevo `thread_id`, el checkpointer no encuentra entradas previas asociadas y el agente arranca con memoria en blanco (verificado en `src/prueba_agente.py:TEST 4`).
 - **Recorte de historial (`trim_messages` en middleware/prompt modifier):**
-  - Implementado en `crear_prompt_modifier()` (`src/agente.py:141`).
+  - Implementado en `crear_middleware_recorte()` (middleware de `create_agent`, `src/agente.py`); `crear_prompt_modifier()` conserva la misma lógica para las pruebas.
   - Límite configurado: constante `MAX_MENSAJES_HISTORIAL = 8` (`src/config.py:16`).
   - Reglas aplicadas:
     1. Estrategia `"last"` con `token_counter=len` para conservar los últimos 8 mensajes conversacionales.

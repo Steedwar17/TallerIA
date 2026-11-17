@@ -26,7 +26,8 @@ from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_core.tools import tool
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
+from langchain.agents.middleware import wrap_model_call
 
 from src.config import (
     GEMINI_MODEL,
@@ -144,6 +145,30 @@ def crear_prompt_modifier(
     return modifier
 
 
+def crear_middleware_recorte(max_mensajes: int = MAX_MENSAJES_HISTORIAL):
+    """Middleware de create_agent que recorta el historial enviado al modelo.
+
+    Aplica las mismas reglas que crear_prompt_modifier (últimos max_mensajes,
+    inicio en HumanMessage, sin separar tool_calls de sus ToolMessage) pero sin
+    alterar el estado guardado en el checkpointer: solo afecta lo que ve el modelo.
+    """
+
+    @wrap_model_call
+    def recorte_historial(request, handler):
+        recortados = trim_messages(
+            request.messages,
+            max_tokens=max_mensajes,
+            token_counter=len,
+            strategy="last",
+            start_on="human",
+            allow_partial=False,
+            include_system=False,
+        )
+        return handler(request.override(messages=recortados))
+
+    return recorte_historial
+
+
 # ===========================================================================
 # CONSTRUCCIÓN DEL AGENTE (MODULAR)
 # ===========================================================================
@@ -188,19 +213,19 @@ def construir_agente(
     cp = checkpointer or MemorySaver()
 
     if usar_optimizaciones:
-        prompt_fn = crear_prompt_modifier(s_prompt, max_mensajes=MAX_MENSAJES_HISTORIAL)
-        agente = create_react_agent(
+        agente = create_agent(
             model=modelo,
             tools=tools,
-            prompt=prompt_fn,
+            system_prompt=s_prompt,
+            middleware=[crear_middleware_recorte(MAX_MENSAJES_HISTORIAL)],
             checkpointer=cp,
         )
     else:
         # Modo baseline sin optimizaciones
-        agente = create_react_agent(
+        agente = create_agent(
             model=modelo,
             tools=tools,
-            prompt=SystemMessage(content=s_prompt),
+            system_prompt=s_prompt,
             checkpointer=cp,
         )
 
