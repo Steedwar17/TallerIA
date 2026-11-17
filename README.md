@@ -2,11 +2,87 @@
 
 Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Neuro-Agénticos Interactivos** — Maestría en Inteligencia Artificial / Pregrado, Universidad de Boyacá.
 
+
+## Contenido
+
+- [Sección 1 · Identificación, Ruta y Propuesta de Valor](#sección-1--identificación-ruta-y-propuesta-de-valor)
+  - [1.1 Integrantes, Ruta y Dataset](#11-integrantes-ruta-y-dataset)
+  - [1.2 Distribución de Responsabilidades y Componentes Desarrollados](#12-distribución-de-responsabilidades-y-componentes-desarrollados)
+  - [1.3 Propuesta de Valor del Sistema Neuro-Agéntico](#13-propuesta-de-valor-del-sistema-neuro-agéntico)
+- [Sección 2 · Arquitectura del Sistema (Diagrama Propio)](#sección-2--arquitectura-del-sistema-diagrama-propio)
+  - [2.1 Diagrama de Arquitectura](#21-diagrama-de-arquitectura)
+  - [2.2 Especificación de la Arquitectura en Mermaid](#22-especificación-de-la-arquitectura-en-mermaid)
+  - [2.3 Explicación de la Arquitectura](#23-explicación-de-la-arquitectura)
+- [Sección 3 · Ingeniería del Modelo de Red Neuronal (Unidad 4) y Análisis de un Fallo Real](#sección-3--ingeniería-del-modelo-de-red-neuronal-unidad-4-y-análisis-de-un-fallo-real)
+  - [3.1 Datos y preprocesamiento](#31-datos-y-preprocesamiento)
+  - [3.2 Arquitectura e hiperparámetros](#32-arquitectura-e-hiperparámetros)
+  - [3.3 Curvas de entrenamiento vs. validación](#33-curvas-de-entrenamiento-vs-validación)
+  - [3.4 Comparación en el conjunto de prueba](#34-comparación-en-el-conjunto-de-prueba)
+  - [3.5 Análisis de un fallo real](#35-análisis-de-un-fallo-real)
+- [Sección 4 · Diseño del Agente y Matriz de Evaluación (Unidad 5)](#sección-4--diseño-del-agente-y-matriz-de-evaluación-unidad-5)
+  - [4.1 Las Dos Herramientas](#41-las-dos-herramientas)
+  - [4.2 Docstrings](#42-docstrings)
+  - [4.3 Memoria y `thread_id`](#43-memoria-y-thread_id)
+  - [4.4 Cuidado de Tokens y Cuota](#44-cuidado-de-tokens-y-cuota)
+  - [4.5 Matriz de Evaluación](#45-matriz-de-evaluación)
+- [Sección 5 · Bitácora de Vibe Coding y Razonamiento Crítico](#sección-5--bitácora-de-vibe-coding-y-razonamiento-crítico)
+  - [5.1 Registro de Episodios](#51-registro-de-episodios)
+  - [5.2 Evidencia General de Uso de IA](#52-evidencia-general-de-uso-de-ia)
+  - [5.3 Reflexiones del Equipo](#53-reflexiones-del-equipo)
+- [Sección 6 · Demostración de la Interfaz (Streamlit)](#sección-6--demostración-de-la-interfaz-streamlit)
+  - [Galería de Evidencias de la Aplicación](#galería-de-evidencias-de-la-aplicación)
+  - [Video Demostrativo](#video-demostrativo)
+- [Sección 7 · Guía de Instalación y Ejecución Reproducible](#sección-7--guía-de-instalación-y-ejecución-reproducible)
+  - [7.1 Requisitos Previos](#71-requisitos-previos)
+  - [7.2 Clonación y Configuración del Entorno Virtual](#72-clonación-y-configuración-del-entorno-virtual)
+  - [7.3 Instalación de Dependencias](#73-instalación-de-dependencias)
+  - [7.4 Configuración de Variables de Entorno](#74-configuración-de-variables-de-entorno)
+  - [7.5 Pesos del Modelo Neuronal](#75-pesos-del-modelo-neuronal)
+  - [7.6 Ejecución de la Aplicación Streamlit](#76-ejecución-de-la-aplicación-streamlit)
+  - [7.7 Ejecución de los Notebooks de Evaluación](#77-ejecución-de-los-notebooks-de-evaluación)
+  - [7.8 Ejecución de la Suite de Pruebas Automatizadas](#78-ejecución-de-la-suite-de-pruebas-automatizadas)
+
+## Estructura del Repositorio
+
+```text
+triaje-neuro-agentico/
+├── README.md                       # Informe técnico (7 secciones)
+├── requirements.txt                # Dependencias fijadas
+├── .env.example                    # Plantilla: GOOGLE_API_KEY=tu_clave_aqui
+├── .gitignore                      # Excluye .env, .venv, __pycache__, etc.
+├── app.py                          # Aplicación Streamlit (red neuronal + agente)
+├── src/
+│   ├── config.py                   # Constantes (SEQ_LEN, umbral, modelo Gemini)
+│   ├── preprocesamiento.py         # Limpieza de texto
+│   ├── inferencia.py               # Carga del modelo y predicción (U4)
+│   ├── tool_sentimiento.py         # @tool #1: clasificar_sentimiento_resena
+│   ├── tool_politicas.py           # @tool #2: consultar_politica_triaje
+│   ├── herramientas.py             # Registro de las dos herramientas
+│   ├── agente.py                   # Agente ReAct + MemorySaver + thread_id
+│   ├── evaluacion.py               # Trayectoria y resultado (tool_calls)
+│   ├── medicion_tokens.py          # Medición de tokens antes vs. después
+│   └── prueba_*.py                 # Pruebas automatizadas
+├── notebooks/
+│   ├── entrenamiento_u4.ipynb      # Entrenamiento y comparación (U4)
+│   └── evaluacion_agente_u5.ipynb  # Evaluación del agente, 4 casos (U5)
+├── models/
+│   └── sentimiento_imdb.keras      # Pesos exportados
+└── assets/                         # Gráficas, capturas de la app y evidencias de Vibe Coding
+    ├── curvas_*.png, matriz_*.png  # Gráficas generadas por entrenamiento_u4.ipynb
+    ├── diagramas/                  # Diagrama de arquitectura
+    ├── capturas/
+    │   ├── panel_neuronal/         # Capturas del panel de la red (U4)
+    │   └── agente/                 # Capturas del agente (casos 1-4 y memoria)
+    ├── apuntes/                    # Cifras y resultados de soporte
+    └── vibe_coding/                # Planes y conversaciones de IA
+```
+
+
 ---
 
 # Sección 1 · Identificación, Ruta y Propuesta de Valor
 
-### Integrantes del Proyecto
+## 1.1 Integrantes, Ruta y Dataset
 * **Juan Diego Castillo Jiménez**
 * **Michael Steedwar Parra Daza**
 
@@ -15,7 +91,7 @@ Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Ne
 
 ---
 
-### Distribución de Responsabilidades y Componentes Desarrollados
+## 1.2 Distribución de Responsabilidades y Componentes Desarrollados
 
 | Integrante | Componentes Desarrollados | Entregables y Módulos Técnicos |
 |---|---|---|
@@ -24,7 +100,7 @@ Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Ne
 
 ---
 
-### Propuesta de Valor del Sistema Neuro-Agéntico
+## 1.3 Propuesta de Valor del Sistema Neuro-Agéntico
 
 > ### [ESCRIBE AQUÍ (equipo)] — Justificación y Propuesta de Valor
 >
@@ -40,14 +116,16 @@ Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Ne
 
 # Sección 2 · Arquitectura del Sistema (Diagrama Propio)
 
+## 2.1 Diagrama de Arquitectura
+
 > **ESTADO DEL DIAGRAMA:** `BORRADOR PARA AJUSTAR POR EL EQUIPO`  
 > **Decisiones de diseño para revisión del equipo:**
 > 1. Verificar si la separación modular entre la interfaz Streamlit y el agente refleja fielmente el aislamiento de paneles.
 > 2. Confirmar que la cadena de llamadas entre el agente, la `@tool #1` y los pesos `.keras` documenta adecuadamente el tiempo de inferencia local.
 
-![Arquitectura del Sistema](assets/arquitectura.png)
+![Arquitectura del Sistema](assets/diagramas/arquitectura.png)
 
-### Especificación de la Arquitectura en Mermaid
+## 2.2 Especificación de la Arquitectura en Mermaid
 
 ```mermaid
 flowchart TD
@@ -102,6 +180,8 @@ flowchart TD
 
     Graph -->|"respuesta final + tool_calls + métricas tokens"| UI_Render
 ```
+
+## 2.3 Explicación de la Arquitectura
 
 > ### [ESCRIBE AQUÍ (Juan Diego)] — Explicación de la Arquitectura
 > **Preguntas guía para tu redacción:**
@@ -214,7 +294,7 @@ flowchart TD
 
 # Sección 4 · Diseño del Agente y Matriz de Evaluación (Unidad 5)
 
-### 4.1 Las Dos Herramientas
+## 4.1 Las Dos Herramientas
 
 El agente dispone de dos herramientas especializadas con responsabilidades no superpuestas:
 
@@ -265,7 +345,7 @@ El agente dispone de dos herramientas especializadas con responsabilidades no su
 
 ---
 
-### 4.2 Docstrings
+## 4.2 Docstrings
 
 Los docstrings actúan como el manual de operaciones del planificador del LLM. Su diseño optimizado incluye directrices explícitas de activación positiva (`Usala:`) y exclusión negativa (`NO usar:`).
 
@@ -279,11 +359,11 @@ Los docstrings actúan como el manual de operaciones del planificador del LLM. S
 
 ---
 
-### 4.3 Memoria y `thread_id`
+## 4.3 Memoria y `thread_id`
 
 La memoria conversacional del agente se gestiona a través de un checkpointer volátil en memoria (`MemorySaver`), aislando las sesiones mediante `thread_id`.
 
-#### 1. Creación del Checkpointer y Compilación del Agente ([src/agente.py](src/agente.py))
+### 1. Creación del Checkpointer y Compilación del Agente ([src/agente.py](src/agente.py))
 ```python
 checkpointer = MemorySaver()
 agente = create_react_agent(
@@ -294,7 +374,7 @@ agente = create_react_agent(
 )
 ```
 
-#### 2. Configuración y Generación de Sesión ([src/agente.py](src/agente.py))
+### 2. Configuración y Generación de Sesión ([src/agente.py](src/agente.py))
 ```python
 def nuevo_thread_id() -> str:
     """Genera un nuevo identificador de sesión único (UUID4)."""
@@ -306,7 +386,7 @@ def config_sesion(thread_id: str) -> Dict[str, Any]:
     return {"configurable": {"thread_id": thread_id}}
 ```
 
-#### 3. Reinicio de Sesión en la Aplicación ([app.py](app.py))
+### 3. Reinicio de Sesión en la Aplicación ([app.py](app.py))
 ```python
 if st.button("🔄 Reiniciar conversación", help="Genera un nuevo thread_id y vacía el historial de pantalla"):
     st.session_state.ag_thread_id = nuevo_thread_id()
@@ -324,7 +404,7 @@ if st.button("🔄 Reiniciar conversación", help="Genera un nuevo thread_id y v
 
 ---
 
-### 4.4 Cuidado de Tokens y Cuota
+## 4.4 Cuidado de Tokens y Cuota
 
 Para operar de forma sostenible dentro de la capa gratuita de Google AI Studio (15 RPM), se implementaron 9 medidas de optimización técnica:
 
@@ -340,7 +420,7 @@ Para operar de forma sostenible dentro de la capa gratuita de Google AI Studio (
 | 8 | **Límite de ritmo (`InMemoryRateLimiter`)** | [src/agente.py](src/agente.py) | **0.25 req/seg** (15 RPM) para prevenir errores HTTP 429 |
 | 9 | **Tope defensivo de entrada** | [src/config.py](src/config.py), [src/agente.py](src/agente.py) | Truncado automático a **4,000 caracteres** |
 
-#### Comparativa Global Antes vs. Después ([assets/apuntes/medicion_tokens.md](assets/apuntes/medicion_tokens.md))
+### Comparativa Global Antes vs. Después ([assets/apuntes/medicion_tokens.md](assets/apuntes/medicion_tokens.md))
 
 | Caso Evaluado | Tokens Antes (In / Out / Tot) | Tokens Después (In / Out / Tot) | Ahorro Total (%) |
 |---|---|---|:---:|
@@ -359,7 +439,7 @@ Para operar de forma sostenible dentro de la capa gratuita de Google AI Studio (
 
 ---
 
-### 4.5 Matriz de Evaluación
+## 4.5 Matriz de Evaluación
 
 Resultados reproducibles extraídos de [notebooks/evaluacion_agente_u5.ipynb](notebooks/evaluacion_agente_u5.ipynb) (Celda 12, In[6]):
 
@@ -386,6 +466,8 @@ Resultados reproducibles extraídos de [notebooks/evaluacion_agente_u5.ipynb](no
 
 # Sección 5 · Bitácora de Vibe Coding y Razonamiento Crítico
 
+## 5.1 Registro de Episodios
+
 Registro unificado de incidencias, errores de librerías, APIs desactualizadas y malas prácticas detectadas durante el desarrollo asistido por IA, ordenado cronológicamente:
 
 | # | Fecha | Tarea | Integrante | Herramienta IA | Qué propuso la IA | Problema detectado | Cómo se corrigió | Captura en `assets/vibe_coding/` | Estado Evidencia |
@@ -396,9 +478,17 @@ Registro unificado de incidencias, errores de librerías, APIs desactualizadas y
 | 4 | 2026-11-17 | Tarea 12 | Juan Diego | Antigravity | `@patch("app_agent.responder")` en `AppTest`. | `AppTest` corre en hilo aislado e importaba de nuevo `src.agente`, llamando a la API real. | `patch.object(src.agente, "responder")` interceptando directamente el módulo origen. | `assets/vibe_coding/episodio4.png` | ⚠️ Pendiente captura |
 | 5 | 2026-11-17 | Tarea 15 | Steedwar | Codex | Reejecutar notebook de entrenamiento para matrices de confusión. | Sobrescribió incidentalmente `models/sentimiento_imdb.keras`, violando el alcance. | Restauración de pesos desde `HEAD` y aislamiento de celda de matrices. | `assets/vibe_coding/episodio5.png` | ⚠️ Pendiente captura |
 
+## 5.2 Evidencia General de Uso de IA
+
+- Conversación compartida (Claude): https://claude.ai/share/e65ce0fc-e890-49b2-9be6-e96301573b1f
+- Gemini integrado en Google Docs (Tarea 1, carga del dataset): [assets/vibe_coding/gemini_google_docs_tarea1.md](assets/vibe_coding/gemini_google_docs_tarea1.md)
+- Plan del agente de Antigravity, Tarea 13: [assets/vibe_coding/plan_antigravity_tarea13.md](assets/vibe_coding/plan_antigravity_tarea13.md)
+- Plan del agente de Antigravity, verificación Tarea 19: [assets/vibe_coding/plan_antigravity_verificacion_tarea19.md](assets/vibe_coding/plan_antigravity_verificacion_tarea19.md)
+- Descripción pendiente de redactar.
+
 ---
 
-### Reflexiones del Equipo
+## 5.3 Reflexiones del Equipo
 
 > ### [ESCRIBE AQUÍ (Steedwar)] — Reflexión Crítica sobre el Modelado y Vibe Coding
 > **Preguntas guía para tu redacción:**
@@ -420,51 +510,51 @@ Registro unificado de incidencias, errores de librerías, APIs desactualizadas y
 
 _(introducción pendiente de redactar)_
 
-### Galería de Evidencias de la Aplicación
+## Galería de Evidencias de la Aplicación
 
-#### 1. Inferencia Neuronal: Reseña Positiva Clara
-![Clasificación de reseña positiva](assets/app_panel_modelo_positivo.png)
+### 1. Inferencia Neuronal: Reseña Positiva Clara
+![Clasificación de reseña positiva](assets/capturas/panel_neuronal/01_resena_positiva.png)
 *Figura 6.1:* _(descripción pendiente de redactar)_
 
-#### 2. Inferencia Neuronal: Reseña Negativa Clara
-![Clasificación de reseña negativa](assets/app_panel_modelo_negativo.png)
+### 2. Inferencia Neuronal: Reseña Negativa Clara
+![Clasificación de reseña negativa](assets/capturas/panel_neuronal/02_resena_negativa.png)
 *Figura 6.2:* _(descripción pendiente de redactar)_
 
-#### 3. Inferencia Neuronal: Detección de Baja Confianza (Caso B)
-![Clasificación con baja confianza](assets/app_panel_modelo.png)
+### 3. Inferencia Neuronal: Detección de Baja Confianza (Caso B)
+![Clasificación con baja confianza](assets/capturas/panel_neuronal/03_baja_confianza_caso_b.png)
 *Figura 6.3:* _(descripción pendiente de redactar)_
 
-#### 4. Fallo Real (Caso A): Predicción Positiva con Confianza Máxima
-![Caso A en el panel neuronal](assets/app_caso_a_fallo_real.png)
+### 4. Fallo Real (Caso A): Predicción Positiva con Confianza Máxima
+![Caso A en el panel neuronal](assets/capturas/panel_neuronal/04_fallo_real_caso_a.png)
 *Figura 6.4:* _(descripción pendiente de redactar)_
 
-#### 5. Agente — Caso 1: Saludo sin Herramientas
-![Caso 1 del agente](assets/app_caso1_saludo.png)
+### 5. Agente — Caso 1: Saludo sin Herramientas
+![Caso 1 del agente](assets/capturas/agente/01_caso1_saludo_sin_herramientas.png)
 *Figura 6.5:* _(descripción pendiente de redactar)_
 
-#### 6. Agente — Caso 2: Solo Consulta de Política
-![Caso 2 del agente](assets/app_caso2_politica.png)
+### 6. Agente — Caso 2: Solo Consulta de Política
+![Caso 2 del agente](assets/capturas/agente/02_caso2_solo_politica.png)
 *Figura 6.6:* _(descripción pendiente de redactar)_
 
-#### 7. Agente — Caso 3: Triaje de Reseña Negativa (Clasificación → Política)
-![Caso 3 del agente](assets/app_caso3_triaje_negativo.png)
+### 7. Agente — Caso 3: Triaje de Reseña Negativa (Clasificación → Política)
+![Caso 3 del agente](assets/capturas/agente/03_caso3_clasificacion_y_politica.png)
 *Figura 6.7:* _(descripción pendiente de redactar)_
 
-#### 8. Agente — Caso 4: Reseña de Baja Confianza (Revisión Humana)
-![Caso 4 del agente](assets/app_caso4_baja_confianza.png)
+### 8. Agente — Caso 4: Reseña de Baja Confianza (Revisión Humana)
+![Caso 4 del agente](assets/capturas/agente/04_caso4_baja_confianza.png)
 *Figura 6.8:* _(descripción pendiente de redactar)_
 
-#### 9. Agente — Memoria dentro del Mismo Hilo
-![Memoria en el mismo thread_id](assets/app_memoria_mismo_hilo.png)
+### 9. Agente — Memoria dentro del Mismo Hilo
+![Memoria en el mismo thread_id](assets/capturas/agente/05_memoria_mismo_hilo.png)
 *Figura 6.9:* _(descripción pendiente de redactar)_
 
-#### 10. Agente — Aislamiento de Memoria tras Reiniciar la Conversación
-![Sin contexto tras el reinicio](assets/app_memoria_tras_reinicio.png)
+### 10. Agente — Aislamiento de Memoria tras Reiniciar la Conversación
+![Sin contexto tras el reinicio](assets/capturas/agente/06_memoria_tras_reinicio.png)
 *Figura 6.10:* _(descripción pendiente de redactar)_
 
 ---
 
-### Enlace al Video Demostrativo
+## Video Demostrativo
 
 > ⚠️ **Video Demostrativo del Sistema:**  
 > **[ENLACE AL VIDEO DEMOSTRATIVO (YouTube / Google Drive)]()**  
@@ -476,20 +566,20 @@ _(introducción pendiente de redactar)_
 
 Instrucciones exactas y verificadas para clonar, instalar dependencias, configurar variables de entorno y ejecutar tanto la aplicación interactiva como la suite de evaluación.
 
-### 7.1 Requisitos Previos
+## 7.1 Requisitos Previos
 * **Python:** Versión 3.10 a 3.12 (recomendado 3.11).
 * **Git:** Instalado en el sistema operativo.
 * **Clave de API:** Cuenta en [Google AI Studio](https://aistudio.google.com/) para obtener una `GOOGLE_API_KEY` gratuita.
 
 ---
 
-### 7.2 Clonación y Configuración del Entorno Virtual
+## 7.2 Clonación y Configuración del Entorno Virtual
 
-#### En Windows (PowerShell):
+### En Windows (PowerShell):
 ```powershell
 # 1. Clonar el repositorio
-git clone https://github.com/Steedwar17/TallerIA.git
-cd TallerIA
+git clone https://github.com/Steedwar17/triaje-neuro-agentico.git
+cd triaje-neuro-agentico
 
 # 2. Crear entorno virtual
 python -m venv .venv
@@ -498,11 +588,11 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 ```
 
-#### En Linux / macOS (Bash / Zsh):
+### En Linux / macOS (Bash / Zsh):
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/Steedwar17/TallerIA.git
-cd TallerIA
+git clone https://github.com/Steedwar17/triaje-neuro-agentico.git
+cd triaje-neuro-agentico
 
 # 2. Crear entorno virtual
 python3 -m venv .venv
@@ -513,7 +603,7 @@ source .venv/bin/activate
 
 ---
 
-### 7.3 Instalación de Dependencias
+## 7.3 Instalación de Dependencias
 
 Con el entorno virtual activado, instale las versiones exactas fijadas en el proyecto:
 ```bash
@@ -523,7 +613,7 @@ pip install -r requirements.txt
 
 ---
 
-### 7.4 Configuración de Variables de Entorno
+## 7.4 Configuración de Variables de Entorno
 
 Copie la plantilla de variables de entorno y pegue su clave de Google AI Studio:
 ```bash
@@ -543,13 +633,13 @@ GOOGLE_API_KEY=AIzaSy...tu_clave_aqui
 
 ---
 
-### 7.5 Pesos del Modelo Neuronal
+## 7.5 Pesos del Modelo Neuronal
 
 El archivo entrenado de pesos `models/sentimiento_imdb.keras` pesa **7.58 MB** y ya se encuentra versionado directamente dentro del repositorio Git. No requiere descargas externas vía Git LFS ni comandos adicionales (ver [assets/apuntes/descarga_pesos.md](assets/apuntes/descarga_pesos.md)).
 
 ---
 
-### 7.6 Ejecución de la Aplicación Streamlit
+## 7.6 Ejecución de la Aplicación Streamlit
 
 Para iniciar la aplicación web completa con ambos paneles integrados:
 ```bash
@@ -559,7 +649,7 @@ La aplicación se abrirá automáticamente en su navegador en `http://localhost:
 
 ---
 
-### 7.7 Ejecución de los Notebooks de Evaluación
+## 7.7 Ejecución de los Notebooks de Evaluación
 
 Los notebooks se encuentran en el directorio `notebooks/` y pueden inspeccionarse directamente con sus salidas precomputadas o reejecutarse mediante:
 ```bash
@@ -572,7 +662,7 @@ jupyter nbconvert --to notebook --execute notebooks/evaluacion_agente_u5.ipynb -
 
 ---
 
-### 7.8 Ejecución de la Suite de Pruebas Automatizadas
+## 7.8 Ejecución de la Suite de Pruebas Automatizadas
 
 Para validar las pruebas unitarias y de integración de la aplicación y el agente sin consumir cuota:
 ```bash
