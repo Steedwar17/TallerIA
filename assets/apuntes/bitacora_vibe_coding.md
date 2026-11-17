@@ -26,3 +26,9 @@
 - **Por qué estaba mal:** `streamlit.testing.v1.AppTest` ejecuta el script compilando el código fuente en un hilo aislado que importa `responder` directamente desde `src.agente`, por lo que el parche sobre el namespace de `app_agent` no era interceptado y el test realizaba llamadas reales a la API de Google AI Studio, violando el aislamiento sin cuota.
 - **Corrección:** Se parcheó el objeto directamente en su módulo origen mediante `patch.object(src.agente, "responder")`, logrando la intercepción transparente del mock en `AppTest` sin consumir llamadas reales.
 - **Captura:** en `assets/vibe_coding/`.
+
+## Episodio 5 — 2026-11-17 — Tarea 15 (notebooks/entrenamiento_u4.ipynb - Codex)
+- **Qué propuse:** reejecutar el notebook completo para calcular las matrices de confusión autorizadas.
+- **Por qué estaba mal:** la ejecución volvió a guardar `models/sentimiento_imdb.keras`, un archivo fuera del alcance de la Tarea 15; aunque no se usó como evidencia, modificarlo incidentalmente era una mala práctica de alcance.
+- **Corrección:** se restauró `models/sentimiento_imdb.keras` desde `HEAD`; se conservaron únicamente la celda reproducible del notebook y las dos matrices PNG autorizadas.
+- **Captura:** pendiente en `assets/vibe_coding/`.
