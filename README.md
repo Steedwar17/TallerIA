@@ -108,7 +108,7 @@ triaje-neuro-agentico/
 > - ¿Qué ventajas operativas y de costos ofrece nuestra red neuronal local (`GlobalAveragePooling1D`) frente a delegar cada clasificación de sentimiento a un LLM comercial vía prompt?
 > - ¿Cómo garantizamos la reproducibilidad y calibración de probabilidad con una inferencia determinista en ~15 ms frente a la variabilidad de un LLM?
 > - ¿Qué capacidades aporta el agente ReAct que la red neuronal por sí sola no puede resolver (consulta dinámica de políticas, escalamiento, contextualización y memoria de diálogo)?
-> - ¿Qué cifras concretas del proyecto respaldan esta sinergia (ej. exactitud de 86.50% de la red local, 100% de cumplimiento en la trayectoria del agente y ahorro del 40.1% en tokens)?
+> - ¿Qué cifras concretas del proyecto respaldan esta sinergia (ej. exactitud de 86.50% de la red local, 100% de cumplimiento en la trayectoria del agente y ahorro del 33.9% en tokens)?
 >
 > *(Redacten aquí la justificación con sus propias palabras)*
 
@@ -411,9 +411,9 @@ Para operar de forma sostenible dentro de la capa gratuita de Google AI Studio (
 
 | # | Medida de Ahorro | Ubicación en Código | Efecto Medido / Cifra Empírica |
 |---|---|---|---|
-| 1 | **System prompt compacto (6 directrices)** | [src/agente.py](src/agente.py) | De **395** a **132 tokens** (**66.6% de ahorro**) |
-| 2 | **Docstring compacto Tool #1** | [src/tool_sentimiento.py](src/tool_sentimiento.py) | De **118** a **80 tokens** (**32.2% de ahorro**) |
-| 3 | **Docstring compacto Tool #2** | [src/tool_politicas.py](src/tool_politicas.py) | De **199** a **181 tokens** (**9.0% de ahorro**) |
+| 1 | **System prompt compacto (6 directrices)** | [src/agente.py](src/agente.py) | De **395** a **136 tokens** (**65.6% de ahorro**) |
+| 2 | **Docstring compacto Tool #1** | [src/tool_sentimiento.py](src/tool_sentimiento.py) | De **122** a **122 tokens** (**0.0% de ahorro**) |
+| 3 | **Docstring compacto Tool #2** | [src/tool_politicas.py](src/tool_politicas.py) | De **205** a **187 tokens** (**8.8% de ahorro**) |
 | 4 | **Límite duro de caracteres en Tool #1** | [src/tool_sentimiento.py](src/tool_sentimiento.py) | Assert `len(salida) <= 120` (salida real: **66 chars**) |
 | 5 | **Límite duro de caracteres en Tool #2** | [src/tool_politicas.py](src/tool_politicas.py) | Assert `len(salida) <= 600` (salida real: **156 chars**) |
 | 6 | **Tope de generación (`max_output_tokens`)** | [src/agente.py](src/agente.py) | Limitado a **512 tokens** con `temperature=0` |
@@ -425,15 +425,15 @@ Para operar de forma sostenible dentro de la capa gratuita de Google AI Studio (
 
 | Caso Evaluado | Tokens Antes (In / Out / Tot) | Tokens Después (In / Out / Tot) | Ahorro Total (%) |
 |---|---|---|:---:|
-| **Caso 1: Saludo** | 828 / 106 / 934 | 513 / 48 / 561 | **39.9%** |
-| **Caso 2: Pregunta de política** | 2,009 / 147 / 2,156 | 1,255 / 87 / 1,342 | **37.8%** |
-| **Caso 3: Reseña completa** | 3,833 / 193 / 4,026 | 2,231 / 129 / 2,360 | **41.4%** |
-| **TOTAL SUITE (3 turnos)** | **6,670 / 446 / 7,116** | **3,999 / 264 / 4,263** | **40.1%** |
+| **Caso 1: Saludo** | 838 / 95 / 933 | 565 / 69 / 634 | **32.0%** |
+| **Caso 2: Pregunta de política** | 2,007 / 151 / 2,158 | 1,401 / 98 / 1,499 | **30.5%** |
+| **Caso 3: Reseña completa** | 3,835 / 199 / 4,034 | 2,420 / 159 / 2,579 | **36.1%** |
+| **TOTAL SUITE (3 turnos)** | **6,680 / 445 / 7,125** | **4,386 / 326 / 4,712** | **33.9%** |
 
 > ### [ESCRIBE AQUÍ (Juan Diego)] — Justificación de las Medidas de Ahorro
 > **Preguntas guía para tu redacción:**
 > - ¿Cuál medida de ahorro tuvo el mayor impacto cuantitativo y por qué?
-> - ¿Cómo logramos recortar el 66.6% del system prompt sin comprometer ninguna de las 6 reglas de comportamiento?
+> - ¿Cómo logramos recortar el 65.6% del system prompt sin comprometer ninguna de las 6 reglas de comportamiento?
 > - ¿Por qué era crítico configurar `allow_partial=False` en el recorte de historial para la API de Gemini?
 >
 > *(Redacta aquí tu explicación con tus propias palabras)*

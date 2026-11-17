@@ -21,7 +21,7 @@ Documento de hechos técnicos verificados en código y ejecución real para la S
       JSON (max 120 chars) con sentimiento, confianza y baja_confianza.
   """
   ```
-- **Tokens medidos (`gemini-3.5-flash-lite`):** Reducción de **118 tokens** (base) a **80 tokens** (optimizado) -> **32.2% de ahorro**.
+- **Tokens medidos (`gemini-3.5-flash-lite`):** Reducción de **122 tokens** (base) a **122 tokens** (optimizado) -> **0.0% de ahorro**.
 - **Qué se cambió y motivo observado:** Se eliminó texto narrativo superfluo ("Ejecuta la red neuronal local entrenada con reseñas IMDB..."). Se estructuró en cláusulas operativas directas `Usala:` y `NO usar:` para que el planificador LLM reconozca de inmediato las precondiciones de activación sin consumir tokens de contexto en cada invocación.
 - **[COMPLETADO EN TAREA 10]:** Conectada con `src/tool_sentimiento.py` entregada por Steedwar en la Tarea 9 (`models/sentimiento_imdb.keras`). Docstring real en `src/tool_sentimiento.py:16-29` y límite duro de 120 caracteres en `src/tool_sentimiento.py:44`. Pruebas de integración superadas (6/6).
 
@@ -44,7 +44,7 @@ Documento de hechos técnicos verificados en código y ejecución real para la S
       JSON compacto (max 600 caracteres) con pol_id, prioridad, accion y pauta.
   """
   ```
-- **Tokens medidos (`gemini-3.5-flash-lite`):** Reducción de **199 tokens** (base) a **181 tokens** (optimizado) -> **9.0% de ahorro**.
+- **Tokens medidos (`gemini-3.5-flash-lite`):** Reducción de **205 tokens** (base) a **187 tokens** (optimizado) -> **8.8% de ahorro**.
 - **Qué se cambió y motivo observado:** Se sintetizó la descripción excluyendo redundancias ("plataforma de streaming", "corporativo"), manteniendo explícitas las condiciones de no uso para evitar alucinaciones de llamadas duplicadas.
 
 ---
@@ -72,16 +72,16 @@ Documento de hechos técnicos verificados en código y ejecución real para la S
 
 | # | Medida de Ahorro | Ubicación (Archivo:Línea) | Cifra Empírica Medida |
 |---|---|---|---|
-| 1 | **Optimización del System Prompt (6 reglas)** | `src/agente.py:48-57` | De **395** a **132 tokens** (**66.6% de ahorro**) |
-| 2 | **Optimización de Docstring Tool #1** | `src/agente.py:64-75` | De **118** a **80 tokens** (**32.2% de ahorro**) |
-| 3 | **Optimización de Docstring Tool #2** | `src/tool_politicas.py:38-51` | De **199** a **181 tokens** (**9.0% de ahorro**) |
+| 1 | **Optimización del System Prompt (6 reglas)** | `src/agente.py:48-57` | De **395** a **136 tokens** (**65.6% de ahorro**) |
+| 2 | **Optimización de Docstring Tool #1** | `src/agente.py:64-75` | De **122** a **122 tokens** (**0.0% de ahorro**) |
+| 3 | **Optimización de Docstring Tool #2** | `src/tool_politicas.py:38-51` | De **205** a **187 tokens** (**8.8% de ahorro**) |
 | 4 | **Límite duro de salida en Tool #1** | `src/agente.py:96` | Assert `len(salida) <= 120` (salida real: **66 chars**) |
 | 5 | **Límite duro de salida en Tool #2** | `src/tool_politicas.py:84` | Assert `len(salida) <= 600` (salida real: **156 chars**) |
 | 6 | **Tope de salida del modelo (`max_output_tokens`)** | `src/agente.py:192` | Limitado a **512 tokens** con `temperature=0` |
 | 7 | **Recorte de historial conversacional** | `src/agente.py:157` | Límite máximo de **8 mensajes** recientes (`MAX_MENSAJES_HISTORIAL`) |
 | 8 | **Límite de ritmo (`InMemoryRateLimiter`)** | `src/agente.py:126` | **0.25 req/seg** (15 RPM gratuito) para evitar reintentos HTTP 429 |
 | 9 | **Tope de entrada de usuario (`MAX_CARACTERES_RESENA`)** | `src/config.py:14`, `src/agente.py:233` | Truncado defensivo a **4000 caracteres** |
-| 10 | **Ahorro total medido en suite de 3 casos reales** | `assets/apuntes/medicion_tokens.md` | De **7,116** a **4,263 tokens** (**40.1% de ahorro global**) |
+| 10 | **Ahorro total medido en suite de 3 casos reales** | `assets/apuntes/medicion_tokens.md` | De **7,125** a **4,712 tokens** (**33.9% de ahorro global**) |
 
 ---
 
