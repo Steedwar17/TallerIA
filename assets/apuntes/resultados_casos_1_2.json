@@ -1,0 +1,28 @@
+[
+  {
+    "nombre": "Caso 1",
+    "entrada": "Hola, ¿qué puedes hacer por mí?",
+    "esperadas": [],
+    "invocadas": [],
+    "trayectoria_ok": true,
+    "resultado_ok": true,
+    "detalle_resultado": "respuesta no vacía, sin ToolMessage y sin clasificación inventada",
+    "respuesta": "Hola. Puedo ayudarte con el triaje automatizado de reseñas de streaming en inglés. \n\nMis funciones principales son:\n1. **Clasificar el sentimiento** de las reseñas utilizando un modelo neuronal local (positivo o negativo).\n2. **Consultar la política interna y el protocolo de respuesta** según el análisis de sentimiento y nivel de confianza.\n3. **Determinar la prioridad, la acción recomendada y la pauta** a seguir para cada caso.\n\n¿Tienes alguna reseña o consulta sobre protocolos que desees procesar?",
+    "tokens": 678
+  },
+  {
+    "nombre": "Caso 2",
+    "entrada": "¿Qué política debo aplicar si un cliente amenaza con acciones legales en su reseña?",
+    "esperadas": [
+      "consultar_politica_triaje"
+    ],
+    "invocadas": [
+      "consultar_politica_triaje"
+    ],
+    "trayectoria_ok": true,
+    "resultado_ok": true,
+    "detalle_resultado": "pol_id 'POL_NEG' del ToolMessage aparece en la respuesta",
+    "respuesta": "- **Sentimiento:** Negativo\n- **Confianza:** 1.0\n- **Política:** POL_NEG (Prioridad: ALTA)\n- **Acción:** Ticket de insatisfacción\n- **Pauta:** Empatizar con malestar, agradecer franqueza y ofrecer soporte directo.",
+    "tokens": 1350
+  }
+]
