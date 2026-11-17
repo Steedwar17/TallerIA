@@ -615,7 +615,7 @@ Registro unificado de incidencias, errores de librerías, APIs desactualizadas y
 
 ## Video Demostrativo
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — enlace del video demostrativo (YouTube no listado o Google Drive, máx. 3 min)
+**[Ver video demostrativo (Google Drive)](https://drive.google.com/file/d/177cMiWQjCKruie1p2ZrsadWDnYiEyp7f/view?usp=sharing)**
 
 ---
 
