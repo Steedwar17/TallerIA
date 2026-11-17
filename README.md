@@ -418,29 +418,49 @@ Registro unificado de incidencias, errores de librerías, APIs desactualizadas y
 
 # Sección 6 · Demostración de la Interfaz (Streamlit)
 
-La aplicación web interactiva desarrollada en Streamlit (`app.py`) consolida la clasificación neuronal directa y el flujo neuro-agéntico en una interfaz organizada por pestañas:
+_(introducción pendiente de redactar)_
 
 ### Galería de Evidencias de la Aplicación
 
 #### 1. Inferencia Neuronal: Reseña Positiva Clara
 ![Clasificación de reseña positiva](assets/app_panel_modelo_positivo.png)
-*Figura 6.1: Panel neuronal directo clasificando una reseña positiva con alta confianza (99.87%), mostrando barra de certeza y probabilidades detalladas.*
+*Figura 6.1:* _(descripción pendiente de redactar)_
 
 #### 2. Inferencia Neuronal: Reseña Negativa Clara
 ![Clasificación de reseña negativa](assets/app_panel_modelo_negativo.png)
-*Figura 6.2: Panel neuronal directo clasificando una reseña negativa con alta confianza (99.91%).*
+*Figura 6.2:* _(descripción pendiente de redactar)_
 
-#### 3. Inferencia Neuronal: Detección de Baja Confianza (Caso B de Fallo Real)
+#### 3. Inferencia Neuronal: Detección de Baja Confianza (Caso B)
 ![Clasificación con baja confianza](assets/app_panel_modelo.png)
-*Figura 6.3: Panel neuronal directo identificando una reseña ambigua con certeza (58.35%) inferior al umbral de seguridad (0.70), emitiendo advertencia de revisión.*
+*Figura 6.3:* _(descripción pendiente de redactar)_
 
-#### 4. Agente de Triaje Inteligente: Flujo Completo Multi-Herramienta
-![Panel del agente de triaje](assets/app_panel_agente.png)
-*Figura 6.4: Conversación con el agente donde se procesa una reseña, se invoca `@tool #1` (clasificación) seguida de `@tool #2` (política de insatisfacción), con desglose técnico e indicadores de consumo de tokens.*
+#### 4. Fallo Real (Caso A): Predicción Positiva con Confianza Máxima
+![Caso A en el panel neuronal](assets/app_caso_a_fallo_real.png)
+*Figura 6.4:* _(descripción pendiente de redactar)_
 
-#### 5. Agente de Triaje Inteligente: Reinicio de Sesión y Aislamiento de Memoria
-![Reinicio de conversación del agente](assets/app_reinicio_thread.png)
-*Figura 6.5: Comprobación del botón de reinicio de sesión, generando un nuevo `thread_id` y reseteando la memoria del checkpointer para evitar fuga de contexto previo.*
+#### 5. Agente — Caso 1: Saludo sin Herramientas
+![Caso 1 del agente](assets/app_caso1_saludo.png)
+*Figura 6.5:* _(descripción pendiente de redactar)_
+
+#### 6. Agente — Caso 2: Solo Consulta de Política
+![Caso 2 del agente](assets/app_caso2_politica.png)
+*Figura 6.6:* _(descripción pendiente de redactar)_
+
+#### 7. Agente — Caso 3: Triaje de Reseña Negativa (Clasificación → Política)
+![Caso 3 del agente](assets/app_caso3_triaje_negativo.png)
+*Figura 6.7:* _(descripción pendiente de redactar)_
+
+#### 8. Agente — Caso 4: Reseña de Baja Confianza (Revisión Humana)
+![Caso 4 del agente](assets/app_caso4_baja_confianza.png)
+*Figura 6.8:* _(descripción pendiente de redactar)_
+
+#### 9. Agente — Memoria dentro del Mismo Hilo
+![Memoria en el mismo thread_id](assets/app_memoria_mismo_hilo.png)
+*Figura 6.9:* _(descripción pendiente de redactar)_
+
+#### 10. Agente — Aislamiento de Memoria tras Reiniciar la Conversación
+![Sin contexto tras el reinicio](assets/app_memoria_tras_reinicio.png)
+*Figura 6.10:* _(descripción pendiente de redactar)_
 
 ---
 

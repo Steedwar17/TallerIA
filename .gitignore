@@ -30,3 +30,8 @@ Thumbs.db
 agents.md
 spec.md
 prompts.md
+
+# Configuración de herramientas de IA (Claude Code / agentes)
+.claude/
+.agents/
+CLAUDE.md

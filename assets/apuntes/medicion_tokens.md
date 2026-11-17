@@ -3,24 +3,24 @@
 - **Fecha:** 2026-11-17
 - **Modelo evaluado:** `gemini-3.5-flash-lite`
 - **Checkpointer:** `MemorySaver` con `thread_id`
-- **Ahorro global medido:** **40.1%** de tokens totales en los 3 casos
+- **Ahorro global medido:** **33.9%** de tokens totales en los 3 casos
 
 ## 1. Componentes Estáticos (Tokens por Invocación)
 
 | Componente | Tokens Antes | Tokens Después | Reducción | % Ahorro |
 |---|---|---|---|---|
-| **System Prompt (6 reglas)** | 395 | 132 | 263 | 66.6% |
-| **Docstring Tool #1 (`clasificar_sentimiento_resena`)** | 118 | 80 | 38 | 32.2% |
-| **Docstring Tool #2 (`consultar_politica_triaje`)** | 199 | 181 | 18 | 9.0% |
+| **System Prompt (6 reglas)** | 395 | 136 | 259 | 65.6% |
+| **Docstring Tool #1 (`clasificar_sentimiento_resena`)** | 122 | 122 | 0 | 0.0% |
+| **Docstring Tool #2 (`consultar_politica_triaje`)** | 205 | 187 | 18 | 8.8% |
 
 ## 2. Invocaciones Dinámicas (3 Casos Reales)
 
 | Caso | Métricas Antes (In / Out / Tot / LLM Calls) | Métricas Después (In / Out / Tot / LLM Calls) | Ahorro Total (%) | Tools Invocadas |
 |---|---|---|---|---|
-| **Caso 1: Saludo** | 828 / 106 / 934 / 1 | 513 / 48 / 561 / 1 | **39.9%** | `[]` |
-| **Caso 2: Pregunta de política** | 2009 / 147 / 2156 / 2 | 1255 / 87 / 1342 / 2 | **37.8%** | `['consultar_politica_triaje']` |
-| **Caso 3: Reseña completa** | 3833 / 193 / 4026 / 3 | 2231 / 129 / 2360 / 3 | **41.4%** | `['clasificar_sentimiento_resena', 'consultar_politica_triaje']` |
-| **TOTALES** | **6670 / 446 / 7116 / 6** | **3999 / 264 / 4263 / 6** | **40.1%** | — |
+| **Caso 1: Saludo** | 838 / 95 / 933 / 1 | 565 / 69 / 634 / 1 | **32.0%** | `[]` |
+| **Caso 2: Pregunta de política** | 2007 / 151 / 2158 / 2 | 1401 / 98 / 1499 / 2 | **30.5%** | `['consultar_politica_triaje']` |
+| **Caso 3: Reseña completa** | 3835 / 199 / 4034 / 3 | 2420 / 159 / 2579 / 3 | **36.1%** | `['clasificar_sentimiento_resena', 'consultar_politica_triaje']` |
+| **TOTALES** | **6680 / 445 / 7125 / 6** | **4386 / 326 / 4712 / 6** | **33.9%** | — |
 
 ## 3. Conclusiones Empíricas
 1. **Reducción del System Prompt:** Al eliminar prosa redundante manteniendo intactas las 6 reglas, el tamaño del prompt de sistema se redujo sustancialmente.
