@@ -1,10 +1,20 @@
-# Bitácora de Vibe Coding — Tarea 9
+# Bitácora de Vibe Coding — Registro del Equipo
 
-## Episodio 1 — 2026-11-17 — Tarea 9 (src/inferencia.py)
+## Episodio 1 — 2026-11-17 — Tarea 9 (src/inferencia.py - Steedwar)
 - **Qué propuse:** en `predecir_sentimiento`, llamar `modelo.predict(np.array([[limpio]], dtype=object), verbose=0)`.
 - **Por qué estaba mal:** Keras 3 rechaza arreglos NumPy `dtype=object` (`ValueError: Invalid dtype: object`); `src.prueba_inferencia` falló en la primera llamada. Error de API/mala práctica con entradas string.
 - **Corrección:** `modelo(tf.constant([[limpio]]), training=False)`. Verificado ejecutando `src.prueba_inferencia`.
-- **Captura:** pendiente (la toma Steedwar en `assets/vibe_coding/`).
+- **Captura:** en `assets/vibe_coding/`.
 
-## Decisión de plan (no es error): Plan A vs B
+## Decisión de plan (no es error): Plan A vs B (Steedwar)
 - Plan A (modelo extremo a extremo con `TextVectorization(standardize=None)`) quedó vigente: diferencia máxima 0.0 en proceso nuevo (notebook sección 5, celda 62). El Plan B no fue necesario.
+
+## Episodio 2 — 2026-11-15 / 2026-11-17 — Tarea 6 (src/agente.py - Juan Diego)
+- **Qué propuse:** Utilizar el identificador de modelo `gemini-2.0-flash` y posteriormente `gemini-2.0-flash-lite` para el agente LangGraph.
+- **Por qué estaba mal:** Ambos modelos fueron dados de baja en el API de Google AI Studio, arrojando excepción `ClientError: 404 NOT_FOUND` indicando migrar a la familia `gemini-3.x`. Adicionalmente, el nuevo endpoint retorna bloques de contenido estructurados en listas de diccionarios en lugar de un string plano, lo que provocó un `AttributeError: 'list' object has no attribute 'lower'`.
+- **Corrección:** Se configuró el modelo vigente `gemini-3.5-flash-lite` y se implementó un extractor normalizador en `src/agente.py:responder()` que concatena los bloques `text` de la lista de contenido devuelta por el modelo. Verificado con `src/prueba_agente.py`.
+- **Captura:** en `assets/vibe_coding/`.
+
+## Registro Tarea 8 — Medidas de Ahorro de Tokens (Juan Diego)
+- **Ejecución:** Se verificó previamente la sintaxis de `langchain_core.rate_limiters.InMemoryRateLimiter` y de `langchain_core.messages.trim_messages` en la documentación oficial.
+- **Resultado:** La implementación de límites de salida, recorte de historial, limitador de tasa y contracción de system prompt/docstrings ejecutó de forma limpia en el primer intento, alcanzando un 40.1% de ahorro sin excepciones ni errores de secuencia.
