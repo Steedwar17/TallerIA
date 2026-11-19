@@ -10,4 +10,4 @@
 - **Tamaño de `models/sentimiento_imdb.keras`:** 7.58 MB.
 - **Latencias medidas (`python -m src.prueba_inferencia`):** primera llamada 57.9 ms; segunda 1.8 ms. El modelo se carga una sola vez (`lru_cache`, hits 0 -> 1).
 - **Funciones de apoyo:** `src.inferencia.predecir_sentimiento(texto) -> {"sentimiento","confianza","p_positivo","baja_confianza"}`.
-- **Avisos para integrar:** (1) `src/config.py` no existía; creé uno provisional con `SEQ_LEN = 585` (no 300): es el MAX_LEN con que se entrenó el modelo. (2) El nombre real de la tool #2 en el repo es `consultar_politicas_triaje(categoria, consulta)` y el contrato dice `consultar_politica_triaje(consulta, sentimiento, confianza)`; hay que alinearlos en la tarea 10.
+- **Estado de integración (resuelto):** `src/config.py` define `SEQ_LEN = 585` (el `MAX_LEN` con que se entrenó el modelo). La tool #2 real es `consultar_politica_triaje(consulta, sentimiento, confianza)` en `src/tool_politicas.py`, alineada con el contrato y conectada junto con la tool #1 en `src/herramientas.py`.

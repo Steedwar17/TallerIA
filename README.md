@@ -2,11 +2,87 @@
 
 Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Neuro-Agénticos Interactivos** — Maestría en Inteligencia Artificial Universidad de Boyacá.
 
+
+## Contenido
+
+- [Sección 1 · Identificación, Ruta y Propuesta de Valor](#sección-1--identificación-ruta-y-propuesta-de-valor)
+  - [1.1 Integrantes, Ruta y Dataset](#11-integrantes-ruta-y-dataset)
+  - [1.2 Distribución de Responsabilidades y Componentes Desarrollados](#12-distribución-de-responsabilidades-y-componentes-desarrollados)
+  - [1.3 Propuesta de Valor del Sistema Neuro-Agéntico](#13-propuesta-de-valor-del-sistema-neuro-agéntico)
+- [Sección 2 · Arquitectura del Sistema (Diagrama Propio)](#sección-2--arquitectura-del-sistema-diagrama-propio)
+  - [2.1 Diagrama de Arquitectura](#21-diagrama-de-arquitectura)
+  - [2.2 Especificación de la Arquitectura en Mermaid](#22-especificación-de-la-arquitectura-en-mermaid)
+  - [2.3 Explicación de la Arquitectura](#23-explicación-de-la-arquitectura)
+- [Sección 3 · Ingeniería del Modelo de Red Neuronal (Unidad 4) y Análisis de un Fallo Real](#sección-3--ingeniería-del-modelo-de-red-neuronal-unidad-4-y-análisis-de-un-fallo-real)
+  - [3.1 Datos y preprocesamiento](#31-datos-y-preprocesamiento)
+  - [3.2 Arquitectura e hiperparámetros](#32-arquitectura-e-hiperparámetros)
+  - [3.3 Curvas de entrenamiento vs. validación](#33-curvas-de-entrenamiento-vs-validación)
+  - [3.4 Comparación en el conjunto de prueba](#34-comparación-en-el-conjunto-de-prueba)
+  - [3.5 Análisis de un fallo real](#35-análisis-de-un-fallo-real)
+- [Sección 4 · Diseño del Agente y Matriz de Evaluación (Unidad 5)](#sección-4--diseño-del-agente-y-matriz-de-evaluación-unidad-5)
+  - [4.1 Las Dos Herramientas](#41-las-dos-herramientas)
+  - [4.2 Docstrings](#42-docstrings)
+  - [4.3 Memoria y `thread_id`](#43-memoria-y-thread_id)
+  - [4.4 Cuidado de Tokens y Cuota](#44-cuidado-de-tokens-y-cuota)
+  - [4.5 Matriz de Evaluación](#45-matriz-de-evaluación)
+- [Sección 5 · Bitácora de Vibe Coding y Razonamiento Crítico](#sección-5--bitácora-de-vibe-coding-y-razonamiento-crítico)
+  - [5.1 Registro de Episodios](#51-registro-de-episodios)
+  - [5.2 Evidencia General de Uso de IA](#52-evidencia-general-de-uso-de-ia)
+  - [5.3 Reflexiones del Equipo](#53-reflexiones-del-equipo)
+- [Sección 6 · Demostración de la Interfaz (Streamlit)](#sección-6--demostración-de-la-interfaz-streamlit)
+  - [Galería de Evidencias de la Aplicación](#galería-de-evidencias-de-la-aplicación)
+  - [Video Demostrativo](#video-demostrativo)
+- [Sección 7 · Guía de Instalación y Ejecución Reproducible](#sección-7--guía-de-instalación-y-ejecución-reproducible)
+  - [7.1 Requisitos Previos](#71-requisitos-previos)
+  - [7.2 Clonación y Configuración del Entorno Virtual](#72-clonación-y-configuración-del-entorno-virtual)
+  - [7.3 Instalación de Dependencias](#73-instalación-de-dependencias)
+  - [7.4 Configuración de Variables de Entorno](#74-configuración-de-variables-de-entorno)
+  - [7.5 Pesos del Modelo Neuronal](#75-pesos-del-modelo-neuronal)
+  - [7.6 Ejecución de la Aplicación Streamlit](#76-ejecución-de-la-aplicación-streamlit)
+  - [7.7 Ejecución de los Notebooks de Evaluación](#77-ejecución-de-los-notebooks-de-evaluación)
+  - [7.8 Ejecución de la Suite de Pruebas Automatizadas](#78-ejecución-de-la-suite-de-pruebas-automatizadas)
+
+## Estructura del Repositorio
+
+```text
+triaje-neuro-agentico/
+├── README.md                       # Informe técnico (7 secciones)
+├── requirements.txt                # Dependencias fijadas
+├── .env.example                    # Plantilla: GOOGLE_API_KEY=tu_clave_aqui
+├── .gitignore                      # Excluye .env, .venv, __pycache__, etc.
+├── app.py                          # Aplicación Streamlit (red neuronal + agente)
+├── src/
+│   ├── config.py                   # Constantes (SEQ_LEN, umbral, modelo Gemini)
+│   ├── preprocesamiento.py         # Limpieza de texto
+│   ├── inferencia.py               # Carga del modelo y predicción (U4)
+│   ├── tool_sentimiento.py         # @tool #1: clasificar_sentimiento_resena
+│   ├── tool_politicas.py           # @tool #2: consultar_politica_triaje
+│   ├── herramientas.py             # Registro de las dos herramientas
+│   ├── agente.py                   # Agente ReAct + MemorySaver + thread_id
+│   ├── evaluacion.py               # Trayectoria y resultado (tool_calls)
+│   ├── medicion_tokens.py          # Medición de tokens antes vs. después
+│   └── prueba_*.py                 # Pruebas automatizadas
+├── notebooks/
+│   ├── entrenamiento_u4.ipynb      # Entrenamiento y comparación (U4)
+│   └── evaluacion_agente_u5.ipynb  # Evaluación del agente, 4 casos (U5)
+├── models/
+│   └── sentimiento_imdb.keras      # Pesos exportados
+└── assets/                         # Gráficas, capturas de la app y evidencias de Vibe Coding
+    ├── curvas_*.png, matriz_*.png  # Gráficas generadas por entrenamiento_u4.ipynb
+    ├── diagramas/                  # Diagrama de arquitectura
+    ├── capturas/
+    │   ├── panel_neuronal/         # Capturas del panel de la red (U4)
+    │   └── agente/                 # Capturas del agente (casos 1-4 y memoria)
+    ├── apuntes/                    # Cifras y resultados de soporte
+    └── vibe_coding/                # Planes y conversaciones de IA
+```
+
+
 ---
 
 # Sección 1 · Identificación, Ruta y Propuesta de Valor
 
-### Integrantes del Proyecto
+## 1.1 Integrantes, Ruta y Dataset
 * **Juan Diego Castillo Jiménez**
 * **Michael Steedwar Parra Daza**
 
@@ -15,7 +91,7 @@ Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Ne
 
 ---
 
-### Distribución de Responsabilidades y Componentes Desarrollados
+## 1.2 Distribución de Responsabilidades y Componentes Desarrollados
 
 | Integrante | Componentes Desarrollados | Entregables y Módulos Técnicos |
 |---|---|---|
@@ -24,47 +100,36 @@ Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Ne
 
 ---
 
-### Propuesta de Valor del Sistema Neuro-Agéntico
+## 1.3 Propuesta de Valor del Sistema Neuro-Agéntico
 
-> ### [ESCRIBE AQUÍ (equipo)] — Justificación y Propuesta de Valor
->
-> **Preguntas guía para la redacción del equipo:**
-> - ¿Qué ventajas operativas y de costos ofrece nuestra red neuronal local (`GlobalAveragePooling1D`) frente a delegar cada clasificación de sentimiento a un LLM comercial vía prompt?
-> - ¿Cómo garantizamos la reproducibilidad y calibración de probabilidad con una inferencia determinista en ~15 ms frente a la variabilidad de un LLM?
-> - ¿Qué capacidades aporta el agente ReAct que la red neuronal por sí sola no puede resolver (consulta dinámica de políticas, escalamiento, contextualización y memoria de diálogo)?
-> - ¿Qué cifras concretas del proyecto respaldan esta sinergia (ej. exactitud de 86.50% de la red local, 100% de cumplimiento en la trayectoria del agente y ahorro del 40.1% en tokens)?
->
-> <!-- IDEAS Y DATOS CLAVE PARA LA REDACCIÓN DEL EQUIPO (Borra este comentario al terminar):
-> 1. PUNTOS TÉCNICOS CENTRALES:
->    - El problema de usar solo un LLM vía prompt: Un LLM comercial para clasificar millones de reseñas resulta costoso e ineficiente: latencia de red variable (~1,000 a 2,000 ms), costo financiero acumulativo por cada token de entrada/salida, variabilidad estocástica en respuestas y riesgo de respuestas poco calibradas.
->    - Ventajas de nuestra red neuronal local (Unidad 4): Arquitectura ligera especializada (Embedding + GlobalAveragePooling1D + Dense con Dropout en Keras 3). Es determinista, corre localmente con costo marginal de $0, toma apenas ~9.9 ms por inferencia con caché, y ofrece probabilidades matemáticas calibradas y evaluadas rigurosamente sobre 25,000 reseñas de test (86.50% de accuracy).
->    - Qué aporta el Agente ReAct (Unidad 5): La red neuronal es un clasificador unidimensional; no puede tomar acciones de negocio, no conoce protocolos de atención al cliente ni mantiene memoria conversacional. El agente razona con base en la certeza de la red, consulta políticas internas (POL_POS, POL_NEG, POL_REV), genera respuestas contextualizadas y decide si escalar casos ambiguos a moderación humana.
->    - La propuesta de valor de la sinergia neuro-agéntica: Dividir la carga de trabajo óptimamente: la red local resuelve la clasificación dura de forma instantánea y gratuita; el agente LLM aporta flexibilidad semántica y orquestación con un consumo mínimo de tokens (optimizado con un 40.1% de ahorro en contexto).
-> 2. CIFRAS Y DATOS EXACTOS A CITAR:
->    - Exactitud en test de la red: 86.50% (test loss: 0.4198) en 25,000 reseñas IMDB.
->    - Tiempo de inferencia: ~405 ms primera carga, ~9.9 ms con caché en memoria.
->    - Desempeño del agente: 100% de cumplimiento en trayectorias de herramientas (4/4 casos) y 100% en respuestas.
->    - Optimización de tokens: Reducción del 40.1% en consumo de tokens (de 7,116 a 4,263 tokens medidos).
-> 3. ESTRUCTURA RECOMENDADA EN 3 PÁRRAFOS:
->    - Párrafo 1: Ineficiencias de delegar la clasificación de reseñas a llamadas brutas a un LLM (costo por token, latencia, variabilidad).
->    - Párrafo 2: Fortalezas de nuestra red neuronal local en Keras 3 (eficiencia, costo cero, latencia de ~10 ms, exactitud de 86.50%).
->    - Párrafo 3: Cómo el agente ReAct integra esa predicción con las políticas corporativas, cerrando el ciclo de triaje inteligente con memoria y bajo consumo.
-> -->
->
-> *(Redacten aquí la justificación con sus propias palabras)*
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Justificación y Propuesta de Valor
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué ventajas operativas y de costos ofrece nuestra red neuronal local (`GlobalAveragePooling1D`) frente a delegar cada clasificación de sentimiento a un LLM comercial vía prompt?
+- ¿Cómo garantizamos la reproducibilidad y calibración de probabilidad con una inferencia determinista en ~15 ms frente a la variabilidad de un LLM?
+- ¿Qué capacidades aporta el agente ReAct que la red neuronal por sí sola no puede resolver (consulta dinámica de políticas, escalamiento, contextualización y memoria de diálogo)?
+- ¿Qué cifras concretas del proyecto respaldan esta sinergia (ej. exactitud de 86.50% de la red local, 100% de cumplimiento en la trayectoria del agente y ahorro del 33.9% en tokens)?
+
+</details>
+
+En un entorno empresarial real (como una plataforma de streaming que procesa miles de reseñas al día), delegar cada clasificación de sentimiento a un LLM comercial mediante prompts directos resulta inviable. En primer lugar, genera un costo financiero acumulativo insostenible por cada token procesado. En segundo lugar, introduce una latencia de red variable (entre 1.0 y 2.0 segundos por petición), y en tercer lugar, los LLMs son modelos generativos estocásticos que carecen de una calibración de probabilidad determinista y transparente para clasificaciones binarias cerradas.
+
+Para resolver esa ineficiencia implementamos una red neuronal ligera y especializada (`Embedding` + `GlobalAveragePooling1D` + `Dense` con Dropout en Keras 3). Esta red ofrece tres ventajas operativas contundentes: opera localmente con un costo marginal de $0, ejecuta la inferencia de forma ultraveloz (apenas ~9.9 ms en memoria con caché, frente a los 1,500 ms de una API externa) y produce una probabilidad matemática calibrada entre 0.0 y 1.0 evaluada con rigor sobre 25,000 reseñas de prueba, alcanzando una exactitud del 86.50%.
+
+Sin embargo, la red neuronal por sí sola es "ciega" a la lógica de negocio: solo emite un número y no puede redactar respuestas empáticas, desconocer protocolos de atención, ni recordar interacciones previas. Es aquí donde el agente ReAct se vuelve indispensable: actúa como el operador inteligente que interpreta la certeza de la red, decide si el caso exige un ticket prioritario de insatisfacción (`POL_NEG`), un registro de promotor (`POL_POS`) o derivar a moderación humana si la confianza cae por debajo del 70% (`POL_REV`). Esta sinergia neuro-agéntica divide el trabajo de forma óptima: la red local absorbe la carga pesada de clasificación en milisegundos a costo cero, mientras el agente aporta razonamiento, memoria y gobernanza de negocio con un consumo mínimo de recursos (respaldado por un ahorro del 40.1% en tokens y un 100% de cumplimiento en las pruebas de evaluación).
+
 
 ---
 
 # Sección 2 · Arquitectura del Sistema (Diagrama Propio)
 
-> **ESTADO DEL DIAGRAMA:** `BORRADOR PARA AJUSTAR POR EL EQUIPO`  
-> **Decisiones de diseño para revisión del equipo:**
-> 1. Verificar si la separación modular entre la interfaz Streamlit y el agente refleja fielmente el aislamiento de paneles.
-> 2. Confirmar que la cadena de llamadas entre el agente, la `@tool #1` y los pesos `.keras` documenta adecuadamente el tiempo de inferencia local.
+## 2.1 Diagrama de Arquitectura
 
-![Arquitectura del Sistema](assets/arquitectura.png)
+![Arquitectura del Sistema](assets/diagramas/arquitectura.png)
 
-### Especificación de la Arquitectura en Mermaid
+## 2.2 Especificación de la Arquitectura en Mermaid
 
 ```mermaid
 flowchart TD
@@ -76,7 +141,7 @@ flowchart TD
 
     subgraph Agente ["Agente de Triaje (src/agente.py)"]
         LLM["Modelo Gemini: gemini-3.5-flash-lite\n(ChatGoogleGenerativeAI, temp=0, max_tokens=512)"]
-        Graph["Grafo ReAct (create_react_agent)"]
+        Graph["Agente ReAct (create_agent)"]
         Trimmer["Recorte de historial (trim_messages, max=8)"]
         Prompt["System Prompt Compacto (6 reglas de triaje)"]
     end
@@ -120,13 +185,27 @@ flowchart TD
     Graph -->|"respuesta final + tool_calls + métricas tokens"| UI_Render
 ```
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Explicación de la Arquitectura
+## 2.3 Explicación de la Arquitectura
+
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Explicación de la Arquitectura
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Cómo interactúan el agente ReAct, la red neuronal local y las políticas internas ante una reseña ambigua?
+- ¿Por qué la inferencia de la red neuronal se encapsula en una `@tool` y no se conecta directamente al frontend?
+- ¿De qué manera la memoria (`MemorySaver`) previene re-ejecutar herramientas costosas en turnos consecutivos?
+- Verificar si la separación modular entre la interfaz Streamlit y el agente refleja fielmente el aislamiento de paneles.
+- Confirmar que la cadena de llamadas entre el agente, la `@tool #1` y los pesos `.keras` documenta adecuadamente el tiempo de inferencia local.
+
+</details>
 
 Para explicar la arquitectura primero explicamos el flijo del proyecto, primero el usuario ´por medio de nuestra interfaz hecha con Streamlit envia una consulta o una reseña. Luego el agente que esta basado en un grafo ReAct recibe el mensaje del usuario. Antes de que el agente procese la soplicitud se aplica un filtro de contexto que conserva 8 mensajes recientes que hace que se garantice quie el modelo opere de forma agil sin saturar su limite de tokens sin que se rompa como la idea del dialogo. Aclaramos que si el mensaje contiene un reseña que no ha sido evaluada el agente activa la herramienta de sentimiento, la cual liumpia el texto y ejecuta nuestra red neuronal local, obteniendo una prediccion compacta con su nivel de certeza. Luego el agente toma ese resultado y llama la herramienta de politicas coorporativas ´para asignar el protocolo correspondiente que puede ser entre atencion estandar, ticket prioritario o revision humana. Finalmente se resume todo en una respuesta clara para el usuario, permitioendo auditar en pantalla las herramientas utilizadas y el consumo de recursos.
 
 Una decisison importante de diseño que se tomo fue la de encapsular la red neuronal como una herramienta independiente, en lugar de conectarla directamente a ala pantalla del chat. rEsto lo hicimos porque se otorga autonomia al agente para que tome decisiones de cuandop es realmente necesario clasificar texto. Si un usuario simplemente saluda o pregunta por una política general, el agente responde directamente sin gastar recursos de cómputo en la red local.
 
 Asimismo, la memoria conversacional previene re-ejecuciones innecesarias. Si en turnos posteriores el usuario realiza preguntas de seguimiento (por ejemplo, ¿cuál fue la confianza de esa reseña?), el agente consulta directamente la información almacenada en el historial de la sesión y responde de memoria, sin tener que volver a evaluar el texto en la red neuronal ni duplicar consultas a las herramientas.
+
 
 ---
 
@@ -148,11 +227,16 @@ Asimismo, la memoria conversacional previene re-ejecuciones innecesarias. Si en 
 | Reseñas de `train_final` truncadas | 4,96% |
 | `SEED` | 42 |
 
-> **ESCRIBE AQUÍ (Steedwar)**
->
-> - ¿Por qué elegimos `SEQ_LEN=585` al observar p95=585,0, mediana=172 y máximo=2.459?
-> - ¿Qué implica que el 4,96% de `train_final` se trunque?
-> - ¿Qué evidencia del notebook respalda que el ajuste del vocabulario usó solo `train_final`?
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis de datos y preprocesamiento
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Por qué elegimos `SEQ_LEN=585` al observar p95=585,0, mediana=172 y máximo=2.459?
+- ¿Qué implica que el 4,96% de `train_final` se trunque?
+- ¿Qué evidencia del notebook respalda que el ajuste del vocabulario usó solo `train_final`?
+
+</details>
 
 ## 3.2 Arquitectura e hiperparámetros
 
@@ -167,11 +251,16 @@ Asimismo, la memoria conversacional previene re-ejecuciones innecesarias. Si en 
 | Batch / épocas | 64 / 10 | 64 / 10 |
 | Parámetros totales | 640.545 | 640.545 |
 
-> **ESCRIBE AQUÍ (Steedwar)**
->
-> - ¿Qué ruta siguen los datos desde la secuencia de 585 tokens hasta la salida sigmoide?
-> - ¿Qué cambió exactamente entre ambos modelos y qué permaneció constante?
-> - ¿Por qué los dos modelos tienen 640.545 parámetros pese a incorporar Dropout?
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis de la arquitectura e hiperparámetros
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué ruta siguen los datos desde la secuencia de 585 tokens hasta la salida sigmoide?
+- ¿Qué cambió exactamente entre ambos modelos y qué permaneció constante?
+- ¿Por qué los dos modelos tienen 640.545 parámetros pese a incorporar Dropout?
+
+</details>
 
 ## 3.3 Curvas de entrenamiento vs. validación
 
@@ -179,11 +268,16 @@ Asimismo, la memoria conversacional previene re-ejecuciones innecesarias. Si en 
 
 ![Curvas de accuracy, base vs. mejorado](assets/curvas_accuracy_base_vs_mejorado.png)
 
-> **ESCRIBE AQUÍ (Steedwar)**
->
-> - ¿En qué época se separan las curvas de `loss` del modelo base y qué valores de la tabla lo muestran?
-> - ¿Cómo cambió la brecha de accuracy entrenamiento-validación de 0,1054 a 0,0863?
-> - ¿Qué muestran las épocas 4 y 10 para cada modelo?
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis de las curvas de entrenamiento vs. validación
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿En qué época se separan las curvas de `loss` del modelo base y qué valores de la tabla lo muestran?
+- ¿Cómo cambió la brecha de accuracy entrenamiento-validación de 0,1054 a 0,0863?
+- ¿Qué muestran las épocas 4 y 10 para cada modelo?
+
+</details>
 
 ## 3.4 Comparación en el conjunto de prueba
 
@@ -201,11 +295,16 @@ Asimismo, la memoria conversacional previene re-ejecuciones innecesarias. Si en 
 | Modelo base | `[[11010, 1490], [2020, 10480]]` |
 | Modelo mejorado | `[[11149, 1351], [2024, 10476]]` |
 
-> **ESCRIBE AQUÍ (Steedwar)**
->
-> - ¿Qué diferencia observas entre las métricas de prueba 0,8596 y 0,8650?
-> - ¿Qué celdas de las dos matrices conviene contrastar para la decisión de triaje?
-> - ¿Qué relación tienen las matrices con los 3.375 errores del mejorado?
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis de la comparación en el conjunto de prueba
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué diferencia observas entre las métricas de prueba 0,8596 y 0,8650?
+- ¿Qué celdas de las dos matrices conviene contrastar para la decisión de triaje?
+- ¿Qué relación tienen las matrices con los 3.375 errores del mejorado?
+
+</details>
 
 ## 3.5 Análisis de un fallo real
 
@@ -221,17 +320,22 @@ Asimismo, la memoria conversacional previene re-ejecuciones innecesarias. Si en 
 | Fragmento literal | `Primary plot!Primary direction!Poor interpretation.` |
 | Fuente | `notebooks/entrenamiento_u4.ipynb`, celda 58 |
 
-> **ESCRIBE AQUÍ (Steedwar)**
->
-> - ¿Qué palabras o estructura del texto de cuatro palabras pudieron confundir al modelo?
-> - ¿Cómo se relacionan la predicción positiva 1,000000 y el valor real negativo?
-> - ¿Por qué este caso exige discutir la confianza además de la etiqueta predicha?
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis del fallo real
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué palabras o estructura del texto de cuatro palabras pudieron confundir al modelo?
+- ¿Cómo se relacionan la predicción positiva 1,000000 y el valor real negativo?
+- ¿Por qué este caso exige discutir la confianza además de la etiqueta predicha?
+
+</details>
 
 ---
 
 # Sección 4 · Diseño del Agente y Matriz de Evaluación (Unidad 5)
 
-### 4.1 Las Dos Herramientas
+## 4.1 Las Dos Herramientas
 
 El agente dispone de dos herramientas especializadas con responsabilidades no superpuestas:
 
@@ -273,23 +377,41 @@ El agente dispone de dos herramientas especializadas con responsabilidades no su
        """
    ```
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Análisis de Diseño de Herramientas
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Análisis de Diseño de Herramientas
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué garantiza que la `@tool #1` no se ejecute dos veces sobre la misma reseña dentro de una misma conversación?
+- ¿Por qué la `@tool #2` acepta `sentimiento` y `confianza` opcionales en lugar de obligar al agente a inferirlos siempre?
+
+</details>
 
 En la elavoracion del trabajo tuvimos que tener en cuenta que para que la herramienta del sentimiento no se ejecute innecesariamente mas de una cez sobre el mismo texto implementamos una barrera tecnica. en primer lugar, el prompt del sistema y el docstring de la herramienta contienen instrucciones explícitas de exclusión que le prohíben al agente re-clasificar contenido ya procesado en la conversación. En segundo lugar, gracias a la memoria conversacional, el agente revisa el historial y detecta si ya existe una predicción previa guardada. Al confirmar que ya cuenta con el veredicto de la red neuronal, el agente salta directamente al siguiente paso (consultar la política o responder), ahorrando tiempo y evitando sobrecostos de procesamiento.
 
 Tambien, la herramienta de políticas de triaje fue diseñada como opcionales. Esto lo hicimos porque se desacopla la herramienta y le permite operar en dos escenarios muy distintos: 1. Flujo guiado por el modelo neuronal: Cuando se analiza una reseña completa, el agente envía el sentimiento y la confianza numérica devueltos por la primera herramienta, permitiendo que la política aplique reglas lógicas de certeza (activando de inmediato la revisión humana si la confianza cae por debajo del 70%). 2. Consulta normativa directa: Si un usuario o supervisor pregunta directamente por un protocolo interno (por ejemplo: ¿qué política aplica si un cliente amenaza con demandar?), no existe una reseña previa ni cifras de confianza. Al ser opcionales, la herramienta no falla ni fuerza al agente a inventar datos; simplemente busca en el catálogo de reglas mediante palabras clave y devuelve la política correspondiente
 
+
 ---
 
-### 4.2 Docstrings
+## 4.2 Docstrings
 
 Los docstrings actúan como el manual de operaciones del planificador del LLM. Su diseño optimizado incluye directrices explícitas de activación positiva (`Usala:`) y exclusión negativa (`NO usar:`).
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Impacto Operativo de los Docstrings
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Impacto Operativo de los Docstrings
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué frase exacta del docstring de la `@tool #1` impidió que el modelo la invocara durante el saludo del Caso 1?
+- ¿Qué ajuste realizamos entre la Tarea 6 y la Tarea 8 para evitar que el agente alucinara llamadas duplicadas?
+- ¿Cómo influyó la reducción de tokens en los docstrings sobre el consumo total de contexto en turnos multi-llamada?
+
+</details>
 
 Encontramosque en los agentes basados en LLM, uno de los errores más comunes es la sobre-activasion de herramientas que basicamente es cuando el agente se vuelve ansioso y ejecuta herramientas ante cualquier saludo casual. Para mitigar esto, estructuramos los docstrings bajo una lógica de directrices positivas (Usala cuando...) y exclusiones negativas taxativas (NO usar...). La frase determinante en la primera herramienta fue:
 
-NO usar: saludos, preguntas de politicas o texto ya clasificado.
+`NO usar: saludos, preguntas de politicas o texto ya clasificado.`
 
 Gracias a esta instrucción prohibitiva explícita, en el Caso 1 de evaluación el agente reconoció que ante un mensaje de cortesía (Hola, ¿en qué me puedes ayudar?) no debía invocar la red neuronal, respondiendo de inmediato con una lista vacía de herramientas y consumiendo el mínimo de recursos
 
@@ -297,24 +419,26 @@ Entre la Tarea 6 y la Tarea 8 realizamos una depuración profunda en la redacci�
 
 Esta optimización tuvo además un impacto cuantitativo directo en el consumo de contexto. Dado que la definición de las herramientas se concatena y reenvía al modelo en cada paso intermedio del razonamiento, compactar el docstring de la Tool #1 (de 118 a 80 tokens, un 32.2% de ahorro) y el de la Tool #2 (de 199 a 181 tokens, un 9.0% de ahorro) redujo drásticamente el consumo acumulado de tokens de entrada en turnos complejos de doble llamada
 
+
 ---
 
-### 4.3 Memoria y `thread_id`
+## 4.3 Memoria y `thread_id`
 
 La memoria conversacional del agente se gestiona a través de un checkpointer volátil en memoria (`MemorySaver`), aislando las sesiones mediante `thread_id`.
 
-#### 1. Creación del Checkpointer y Compilación del Agente ([src/agente.py](src/agente.py))
+### 1. Creación del Checkpointer y Compilación del Agente ([src/agente.py](src/agente.py))
 ```python
 checkpointer = MemorySaver()
-agente = create_react_agent(
+agente = create_agent(
     model=llm,
     tools=tools,
+    system_prompt=SYSTEM_PROMPT_COMPACTO,
+    middleware=[crear_middleware_recorte(MAX_MENSAJES_HISTORIAL)],
     checkpointer=checkpointer,
-    prompt=crear_prompt_modifier(SYSTEM_PROMPT_COMPACTO),
 )
 ```
 
-#### 2. Configuración y Generación de Sesión ([src/agente.py](src/agente.py))
+### 2. Configuración y Generación de Sesión ([src/agente.py](src/agente.py))
 ```python
 def nuevo_thread_id() -> str:
     """Genera un nuevo identificador de sesión único (UUID4)."""
@@ -326,7 +450,7 @@ def config_sesion(thread_id: str) -> Dict[str, Any]:
     return {"configurable": {"thread_id": thread_id}}
 ```
 
-#### 3. Reinicio de Sesión en la Aplicación ([app.py](app.py))
+### 3. Reinicio de Sesión en la Aplicación ([app.py](app.py))
 ```python
 if st.button("🔄 Reiniciar conversación", help="Genera un nuevo thread_id y vacía el historial de pantalla"):
     st.session_state.ag_thread_id = nuevo_thread_id()
@@ -334,22 +458,36 @@ if st.button("🔄 Reiniciar conversación", help="Genera un nuevo thread_id y v
     st.rerun()
 ```
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Explicación de la Memoria y Reinicio
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Explicación de la Memoria y Reinicio
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Cómo demostramos empíricamente en la prueba D y E que el agente recuerda en el mismo `thread_id` y olvida al reiniciarlo?
+- ¿Por qué almacenar el agente en `@st.cache_resource` es seguro entre múltiples usuarios que acceden simultáneamente?
+- ¿Qué papel cumple `trim_messages` en evitar desbordamientos de contexto en conversaciones largas?
+
+</details>
+
+Para validar el comportamiento de la memoria conversacional implementamos dos pruebas. En la primera prueba tras clasificar una reseña en un hilo activo, le preguntamos al agente en el siguiente turno: ¿cuál fue la confianza de esa reseña?. El agente respondió con la cifra exacta devuelta por la red neuronal recuperándola directamente del historial del checkpointer sin necesidad de volver a ejecutar la herramienta. Posteriormente, en la segunda prueba que hicimops generamos un nuevo hilo y repetimos la misma pregunta; el agente respondió indicando que no contaba con contexto previo y verificamos que el nuevo hilo iniciaba en blanco, demostrando un borrado y aislamiento perfecto entre sesiones.
+
+Finalmente, para evitar desbordamientos de contexto y sobrecostos en conversaciones extensas, implementamos un recorte dinámico de historial de esta manera restringiendo la memoria a una ventana móvil de los 8 mensajes más recientes y preservando siempre el prompt del sistema. En este mecanismo, configurar el parámetro `allow_partial=False` fue un requisito crítico para la API de Gemini: si un recorte divide un mensaje del agente con llamadas a herramientas (AIMessage.tool_calls) y deja huérfano su correspondiente mensaje de respuesta (ToolMessage), Google AI Studio rechaza la petición con un error 400 (Bad Request). Al exigir `allow_partial=False`, LangChain solo descarta bloques completos de interacción, garantizando estabilidad total en turnos prolongados.
+
 
 Para validar el comportamiento de la memoria conversacional implementamos dos pruebas. En la primera prueba tras clasificar una reseña en un hilo activo, le preguntamos al agente en el siguiente turno: ¿cuál fue la confianza de esa reseña?. El agente respondió con la cifra exacta devuelta por la red neuronal recuperándola directamente del historial del checkpointer sin necesidad de volver a ejecutar la herramienta. Posteriormente, en la segunda prueba que hicimops generamos un nuevo hilo y repetimos la misma pregunta; el agente respondió indicando que no contaba con contexto previo y verificamos que el nuevo hilo iniciaba en blanco, demostrando un borrado y aislamiento perfecto entre sesiones.
 
 Finalmente, para evitar desbordamientos de contexto y sobrecostos en conversaciones extensas, implementamos un recorte dinámico de historial de esta manera restringiendo la memoria a una ventana móvil de los 8 mensajes más recientes y preservando siempre el prompt del sistema. En este mecanismo, configurar el parámetro, fue un requisito crítico para la API de Gemini: si un recorte divide un mensaje del agente con llamadas a herramientas (AIMessage.tool_calls) y deja huérfano su correspondiente mensaje de respuesta (ToolMessage), Google AI Studio rechaza la petición con un error 400 (Bad Request). Al exigir allow_partial=False, LangChain solo descarta bloques completos de interacción, garantizando estabilidad total en turnos prolongados.
 ---
 
-### 4.4 Cuidado de Tokens y Cuota
+## 4.4 Cuidado de Tokens y Cuota
 
 Para operar de forma sostenible dentro de la capa gratuita de Google AI Studio (15 RPM), se implementaron 9 medidas de optimización técnica:
 
 | # | Medida de Ahorro | Ubicación en Código | Efecto Medido / Cifra Empírica |
 |---|---|---|---|
-| 1 | **System prompt compacto (6 directrices)** | [src/agente.py](src/agente.py) | De **395** a **132 tokens** (**66.6% de ahorro**) |
-| 2 | **Docstring compacto Tool #1** | [src/tool_sentimiento.py](src/tool_sentimiento.py) | De **118** a **80 tokens** (**32.2% de ahorro**) |
-| 3 | **Docstring compacto Tool #2** | [src/tool_politicas.py](src/tool_politicas.py) | De **199** a **181 tokens** (**9.0% de ahorro**) |
+| 1 | **System prompt compacto (6 directrices)** | [src/agente.py](src/agente.py) | De **395** a **136 tokens** (**65.6% de ahorro**) |
+| 2 | **Docstring compacto Tool #1** | [src/tool_sentimiento.py](src/tool_sentimiento.py) | De **122** a **122 tokens** (**0.0% de ahorro**) |
+| 3 | **Docstring compacto Tool #2** | [src/tool_politicas.py](src/tool_politicas.py) | De **205** a **187 tokens** (**8.8% de ahorro**) |
 | 4 | **Límite duro de caracteres en Tool #1** | [src/tool_sentimiento.py](src/tool_sentimiento.py) | Assert `len(salida) <= 120` (salida real: **66 chars**) |
 | 5 | **Límite duro de caracteres en Tool #2** | [src/tool_politicas.py](src/tool_politicas.py) | Assert `len(salida) <= 600` (salida real: **156 chars**) |
 | 6 | **Tope de generación (`max_output_tokens`)** | [src/agente.py](src/agente.py) | Limitado a **512 tokens** con `temperature=0` |
@@ -357,16 +495,32 @@ Para operar de forma sostenible dentro de la capa gratuita de Google AI Studio (
 | 8 | **Límite de ritmo (`InMemoryRateLimiter`)** | [src/agente.py](src/agente.py) | **0.25 req/seg** (15 RPM) para prevenir errores HTTP 429 |
 | 9 | **Tope defensivo de entrada** | [src/config.py](src/config.py), [src/agente.py](src/agente.py) | Truncado automático a **4,000 caracteres** |
 
-#### Comparativa Global Antes vs. Después ([assets/apuntes/medicion_tokens.md](assets/apuntes/medicion_tokens.md))
+### Comparativa Global Antes vs. Después ([assets/apuntes/medicion_tokens.md](assets/apuntes/medicion_tokens.md))
 
 | Caso Evaluado | Tokens Antes (In / Out / Tot) | Tokens Después (In / Out / Tot) | Ahorro Total (%) |
 |---|---|---|:---:|
-| **Caso 1: Saludo** | 828 / 106 / 934 | 513 / 48 / 561 | **39.9%** |
-| **Caso 2: Pregunta de política** | 2,009 / 147 / 2,156 | 1,255 / 87 / 1,342 | **37.8%** |
-| **Caso 3: Reseña completa** | 3,833 / 193 / 4,026 | 2,231 / 129 / 2,360 | **41.4%** |
-| **TOTAL SUITE (3 turnos)** | **6,670 / 446 / 7,116** | **3,999 / 264 / 4,263** | **40.1%** |
+| **Caso 1: Saludo** | 838 / 95 / 933 | 565 / 69 / 634 | **32.0%** |
+| **Caso 2: Pregunta de política** | 2,007 / 151 / 2,158 | 1,401 / 98 / 1,499 | **30.5%** |
+| **Caso 3: Reseña completa** | 3,835 / 199 / 4,034 | 2,420 / 159 / 2,579 | **36.1%** |
+| **TOTAL SUITE (3 turnos)** | **6,680 / 445 / 7,125** | **4,386 / 326 / 4,712** | **33.9%** |
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Justificación de las Medidas de Ahorro
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Justificación de las Medidas de Ahorro
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Cuál medida de ahorro tuvo el mayor impacto cuantitativo y por qué?
+- ¿Cómo logramos recortar el 65.6% del system prompt sin comprometer ninguna de las 6 reglas de comportamiento?
+- ¿Por qué era crítico configurar `allow_partial=False` en el recorte de historial para la API de Gemini?
+
+</details>
+
+De las 9 medidas implementadas, la que generó el mayor impacto cuantitativo fue la compresión del System Prompt, el cual redujimos de 395 a solo 132 tokens (un ahorro neto del 66.6%). La razón de su enorme impacto radica en el efecto multiplicador del ciclo ReAct: mientras que los mensajes del usuario o las salidas de las herramientas solo se envían en su respectivo turno, el prompt del sistema se inyecta como prefijo obligatorio en absolutamente todas las llamadas que se hacen al LLM. En un flujo completo donde el agente primero planifica, luego invoca la Tool #1, después la Tool #2 y finalmente redacta la respuesta, el system prompt se reenvía hasta tres o cuatro veces en un solo turno de conversación. Reducir 263 tokens en esa plantilla base se traduce en miles de tokens ahorrados a lo largo de una sesión.
+
+Para lograr esta reduccion sin comprometer el comportamiento del agente eliminamos las cosas que no aportaban como la prosa, los fomralismos innecesarios y las explicaciones pedagogicas extensas. En cambio de eso resumimos las instrucciones bajo una sintaxis imperativa y contractual organizada en seis directrices estrictas: rol de triaje, prohibición de re-clasificar, condición de activación de la Tool #1, flujo de argumentos hacia la Tool #2, formato mínimo de respuesta al usuario y mandato de no corregir a la red neuronal en casos de incertidumbre. Este diseño de alta densidad semántica garantizó que el agente mantuviera un 100% de cumplimiento operativo utilizando únicamente una fracción del contexto original.
+
+Esta estrategia se complementó con límites duros en las salidas de las herramientas, obligándolas a devolver JSON compacto en una sola línea que consume un espacio mínimo en el historial. Asimismo, implementamos un limitador de ritmo en memoria a 0.25 peticiones por segundo bindando a la aplicación contra bloqueos por error HTTP 429 en la capa gratuita de Gemini. Por último, en el recorte de historial con trim_messages, el parámetro allow_partial=False fue vital: garantizó que al ahorrar tokens jamás se descartaran mensajes a medias, evitando romper la pareja indivisible entre la llamada a la herramienta y su resultado, lo que habría provocado un fallo de validación en la API. En conjunto, estas medidas lograron un ahorro global medido del 40.1% en la suite de evaluación (reduciendo de 7,116 a 4,263 tokens)
+
 
 De las 9 medidas implementadas, la que generó el mayor impacto cuantitativo fue la compresión del System Prompt, el cual redujimos de 395 a solo 132 tokens (un ahorro neto del 66.6%). La razón de su enorme impacto radica en el efecto multiplicador del ciclo ReAct: mientras que los mensajes del usuario o las salidas de las herramientas solo se envían en su respectivo turno, el prompt del sistema se inyecta como prefijo obligatorio en absolutamente todas las llamadas que se hacen al LLM. En un flujo completo donde el agente primero planifica, luego invoca la Tool #1, después la Tool #2 y finalmente redacta la respuesta, el system prompt se reenvía hasta tres o cuatro veces en un solo turno de conversación. Reducir 263 tokens en esa plantilla base se traduce en miles de tokens ahorrados a lo largo de una sesión.
 
@@ -375,7 +529,7 @@ Para lograr esta reduccion sin comprometer el comportamiento del agente eliminam
 Esta estrategia se complementó con límites duros en las salidas de las herramientas, obligándolas a devolver JSON compacto en una sola línea que consume un espacio mínimo en el historial. Asimismo, implementamos un limitador de ritmo en memoria a 0.25 peticiones por segundo bindando a la aplicación contra bloqueos por error HTTP 429 en la capa gratuita de Gemini. Por último, en el recorte de historial con trim_messages, el parámetro allow_partial=False fue vital: garantizó que al ahorrar tokens jamás se descartaran mensajes a medias, evitando romper la pareja indivisible entre la llamada a la herramienta y su resultado, lo que habría provocado un fallo de validación en la API. En conjunto, estas medidas lograron un ahorro global medido del 40.1% en la suite de evaluación (reduciendo de 7,116 a 4,263 tokens)
 ---
 
-### 4.5 Matriz de Evaluación
+## 4.5 Matriz de Evaluación
 
 Resultados reproducibles extraídos de [notebooks/evaluacion_agente_u5.ipynb](notebooks/evaluacion_agente_u5.ipynb) (Celda 12, In[6]):
 
@@ -390,7 +544,23 @@ Resultados reproducibles extraídos de [notebooks/evaluacion_agente_u5.ipynb](no
 - **Casos con resultado correcto sobre el total:** 4 de 4 (**100.0%**)
 - **Validación de trayectoria:** Determinada exclusivamente desde `AIMessage.tool_calls` a través de `herramientas_invocadas` en `src/agente.py` y verificada en `src/evaluacion.py`. Cero inspecciones sobre la respuesta final de texto.
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Análisis de la Matriz de Evaluación
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Análisis de la Matriz de Evaluación
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué demuestra que el Caso 1 no active herramientas y el Caso 2 active solo la de políticas?
+- ¿Cómo se garantiza en el Caso 3 que los argumentos de la `@tool #2` coincidan exactamente con la inferencia de la red local?
+- En el Caso 4, ¿por qué fue fundamental que el sistema comunicara la baja confianza (0.5835) y derivara a moderación humana en lugar de automatizar una decisión errónea?
+
+</details>
+
+La diferencia entre el caso 1 y el caso 2 demuestra la capacidad de discriminacion del agnete, en el caso 1 'Hola, ¿qué puedes hacer por mí?', el agente identificó un simple saludo de bienvenida y respondió cordialmente sin activar ninguna herramienta de esta manera consumiendo un minimo de tokens de apenas 609. En cambio, en el caso 2 '¿Qué política debo aplicar si un cliente amenaza con demandar?' reconoció una consulta normativa sobre protocolos de escalamiento legal y activó exclusivamente la herramienta de políticas. Esto comprueba que el agente no opera como un script rígido que dispara herramientas por reflejo, sino que planifica selectivamente según la intención del usuario, ahorrando cómputo y preservando cuota.
+
+En el Caso 3 evaluamos el flujo neuro-agéntico completo utilizando una reseña negativa real del conjunto de prueba. El agente ejecutó de forma autónoma la secuencia requerida, primero invocó la @tool #1 para obtener la inferencia de la red local (sentimiento: 'negativo', confianza: 1.0), y acto seguido utilizó esos mismos valores como argumentos para invocar la @tool #2 (sentimiento='negative', confianza=1). La herramienta retornó la política (Ticket de insatisfacción, Prioridad Alta) y el agente estructuró una respuesta final donde comunicó fielmente tanto el sentimiento como las pautas de atención. En el notebook validamos por código mediante asserts que no existió ninguna distorsión entre lo que arrojó la red local y los argumentos recibidos por la política de triaje
+
+El Caso 4 (basado en el primer caso de fallo real: 'Not bad, but not great either...') puso a prueba el comportamiento ético y defensivo del sistema. La red neuronal predijo sentimiento negativo pero con una certeza de apenas 0.5835 (58.35%), quedando por debajo del umbral corporativo de seguridad (UMBRAL_BAJA_CONFIANZA = 0.70). En lugar de 'adivinar' o corregir al modelo por su cuenta, el agente respetó la directriz del sistema: comunicó abiertamente la baja confianza y aplicó la política (Derivar a moderación humana con prioridad media). En un servicio real de streaming, esta prudencia evita automatizar respuestas equivocadas ante clientes con quejas ambiguas. Finalmente, cabe destacar que todas las trayectorias se auditaron inspeccionando directamente los objetos estructurados y no leyendo texto libre, alcanzando un 100.0% de acierto tanto en trayectorias como en resultados (4 de 4 casos cumplidos).
+
 
 La diferencia entre el caso 1 y el caso 2 demuestra la capacidad de discriminacion del agnete, en el caso 1 'Hola, ¿qué puedes hacer por mí?', el agente identificó un simple saludo de bienvenida y respondió cordialmente sin activar ninguna herramienta de esta manera consumiendo un minimo de tokens de apenas 609. En cambio, en el caso 2 '¿Qué política debo aplicar si un cliente amenaza con demandar?' reconoció una consulta normativa sobre protocolos de escalamiento legal y activó exclusivamente la herramienta de políticas. Esto comprueba que el agente no opera como un script rígido que dispara herramientas por reflejo, sino que planifica selectivamente según la intención del usuario, ahorrando cómputo y preservando cuota.
 
@@ -400,6 +570,8 @@ El Caso 4 (basado en el primer caso de fallo real: 'Not bad, but not great eithe
 ---
 
 # Sección 5 · Bitácora de Vibe Coding y Razonamiento Crítico
+
+## 5.1 Registro de Episodios
 
 Registro unificado de incidencias, errores de librerías, APIs desactualizadas y malas prácticas detectadas durante el desarrollo asistido por IA, ordenado cronológicamente:
 
@@ -411,18 +583,52 @@ Registro unificado de incidencias, errores de librerías, APIs desactualizadas y
 | 4 | 2026-11-17 | Tarea 12 | Juan Diego | Antigravity | `@patch("app_agent.responder")` en `AppTest`. | `AppTest` corre en hilo aislado e importaba de nuevo `src.agente`, llamando a la API real. | `patch.object(src.agente, "responder")` interceptando directamente el módulo origen. | `assets/vibe_coding/episodio4.png` | ⚠️ Pendiente captura |
 | 5 | 2026-11-17 | Tarea 15 | Steedwar | Codex | Reejecutar notebook de entrenamiento para matrices de confusión. | Sobrescribió incidentalmente `models/sentimiento_imdb.keras`, violando el alcance. | Restauración de pesos desde `HEAD` y aislamiento de celda de matrices. | `assets/vibe_coding/episodio5.png` | ⚠️ Pendiente captura |
 
+## 5.2 Evidencia General de Uso de IA
+
+- Conversación compartida (Claude): https://claude.ai/share/e65ce0fc-e890-49b2-9be6-e96301573b1f
+- Gemini integrado en Google Docs (Tarea 1, carga del dataset): [assets/vibe_coding/gemini_google_docs_tarea1.md](assets/vibe_coding/gemini_google_docs_tarea1.md)
+- Plan del agente de Antigravity, Tarea 13: [assets/vibe_coding/plan_antigravity_tarea13.md](assets/vibe_coding/plan_antigravity_tarea13.md)
+- Plan del agente de Antigravity, verificación Tarea 19: [assets/vibe_coding/plan_antigravity_verificacion_tarea19.md](assets/vibe_coding/plan_antigravity_verificacion_tarea19.md)
+- Capturas de la conversación con Claude (generación y ajuste de los prompts de las tareas):
+
+![Claude: prompts por tarea](assets/vibe_coding/01_claude_prompts_por_tarea.png)
+
+![Claude: prompts de la Tarea 19 y revisión](assets/vibe_coding/02_claude_prompts_tarea19_y_revision.png)
+
+![Claude: prompt actualizado de la Tarea 17](assets/vibe_coding/03_claude_prompt_tarea17_actualizado.png)
+
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — descripción de la evidencia de uso de IA del modelo (Tareas 3, 5, 9 y 15)
+
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la evidencia de uso de IA del agente (Tareas 6, 10, 12 y 16)
+
 ---
 
-### Reflexiones del Equipo
+## 5.3 Reflexiones del Equipo
 
-> ### [ESCRIBE AQUÍ (Steedwar)] — Reflexión Crítica sobre el Modelado y Vibe Coding
-> **Preguntas guía para tu redacción:**
-> - ¿Qué precauciones técnicas se deben tener al usar asistentes de IA para el entrenamiento y exportación de modelos en Keras 3?
-> - ¿Cómo afectó la incompatibilidad de tipos `dtype=object` la fase de inferencia y cómo se detectó?
->
-> *(Redacta aquí tu reflexión crítica personal con tus propias palabras)*
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Reflexión Crítica sobre el Modelado y Vibe Coding
 
-> ### [ESCRIBE AQUÍ (Juan Diego)] — Reflexión Crítica sobre el Agente y Vibe Coding
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Qué precauciones técnicas se deben tener al usar asistentes de IA para el entrenamiento y exportación de modelos en Keras 3?
+- ¿Cómo afectó la incompatibilidad de tipos `dtype=object` la fase de inferencia y cómo se detectó?
+
+</details>
+
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Reflexión Crítica sobre el Agente y Vibe Coding
+
+<details>
+<summary>Preguntas guía</summary>
+
+- ¿Por qué la supervisión humana y las pruebas automatizadas con asserts estrictos fueron indispensables para detectar los errores de la IA?
+- ¿Qué riesgos habría implicado aceptar ciegamente la propuesta de modelo `gemini-2.0-flash` o el parche incorrecto de `AppTest`?
+
+</details>
+
+Entendimos que el desarrollo asistido por modelos generativos ofrece una velocidad impresionante para prototipar, pero que introduce un riesgo el cual consta de que genera una ilusion de que el codigo funciona simplemente por que es visualmente correcta o no arroja errores visibles a primera vista. En arquitecturas agénticas, donde intervienen modelos probabilísticos y múltiples herramientas, los errores no siempre generan excepciones de sintaxis; a menudo se manifiestan como llamadas duplicadas a APIs, omisión de directrices o consumo excesivo de contexto. En este proyecto, la supervisión humana complementada con una batería de pruebas automatizadas y asserts estrictos donde esto nos deja como unico fltro para encontrar las fallas de la IA antes de que se dañe el entorno de produccion y conyebe a multiples conflictos, y mas que la ser un trabajo colaborativo debiamos de entender cualquier decision tomada.
+
+Los incidentes documentados en nuestra bitácora evidencian los peligros que habría conllevado aceptar ciegamente las sugerencias del asistente. En primer lugar, la IA propuso utilizar el modelo gemini-2.0-flash, el cual ya se encontraba descontinuado en Google AI Studio; de no haber auditado la llamada en vivo, la aplicación habría colapsado de inmediato con un error 404 NOT_FOUND ante el evaluador. Fue necesario investigar la documentación oficial vigente, migrar a gemini-3.5-flash-lite y construir un normalizador defensivo de respuestas. En segundo lugar, al crear las pruebas de la interfaz con AppTest, la IA sugirió un decorador @patch('app_agent.responder') que resultaba inútil: como el runner de Streamlit se ejecuta en un hilo aislado, el módulo se volvía a importar en un espacio de nombres independiente, saltándose el mock y consumiendo peticiones reales a la API. De haberlo ignorado, habríamos agotado la cuota gratuita en cuestión de minutos durante las pruebas automáticas.
+
 
 Entendimos que el desarrollo asistido por modelos generativos ofrece una velocidad impresionante para prototipar, pero que introduce un riesgo el cual consta de que genera una ilusion de que el codigo funciona simplemente por que es visualmente correcta o no arroja errores visibles a primera vista. En arquitecturas agénticas, donde intervienen modelos probabilísticos y múltiples herramientas, los errores no siempre generan excepciones de sintaxis; a menudo se manifiestan como llamadas duplicadas a APIs, omisión de directrices o consumo excesivo de contexto. En este proyecto, la supervisión humana complementada con una batería de pruebas automatizadas y asserts estrictos donde esto nos deja como unico fltro para encontrar las fallas de la IA antes de que se dañe el entorno de produccion y conyebe a multiples conflictos, y mas que la ser un trabajo colaborativo debiamos de entender cualquier decision tomada.
 
@@ -431,57 +637,55 @@ Los incidentes documentados en nuestra bitácora evidencian los peligros que hab
 
 # Sección 6 · Demostración de la Interfaz (Streamlit)
 
-_(introducción pendiente de redactar)_
+**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — introducción de la Sección 6
 
-### Galería de Evidencias de la Aplicación
+## Galería de Evidencias de la Aplicación
 
-#### 1. Inferencia Neuronal: Reseña Positiva Clara
-![Clasificación de reseña positiva](assets/app_panel_modelo_positivo.png)
-*Figura 6.1:* _(descripción pendiente de redactar)_
+### 1. Inferencia Neuronal: Reseña Positiva Clara
+![Clasificación de reseña positiva](assets/capturas/panel_neuronal/01_resena_positiva.png)
+*Figura 6.1:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
-#### 2. Inferencia Neuronal: Reseña Negativa Clara
-![Clasificación de reseña negativa](assets/app_panel_modelo_negativo.png)
-*Figura 6.2:* _(descripción pendiente de redactar)_
+### 2. Inferencia Neuronal: Reseña Negativa Clara
+![Clasificación de reseña negativa](assets/capturas/panel_neuronal/02_resena_negativa.png)
+*Figura 6.2:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
-#### 3. Inferencia Neuronal: Detección de Baja Confianza (Caso B)
-![Clasificación con baja confianza](assets/app_panel_modelo.png)
-*Figura 6.3:* _(descripción pendiente de redactar)_
+### 3. Inferencia Neuronal: Detección de Baja Confianza (Caso B)
+![Clasificación con baja confianza](assets/capturas/panel_neuronal/03_baja_confianza_caso_b.png)
+*Figura 6.3:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
-#### 4. Fallo Real (Caso A): Predicción Positiva con Confianza Máxima
-![Caso A en el panel neuronal](assets/app_caso_a_fallo_real.png)
-*Figura 6.4:* _(descripción pendiente de redactar)_
+### 4. Fallo Real (Caso A): Predicción Positiva con Confianza Máxima
+![Caso A en el panel neuronal](assets/capturas/panel_neuronal/04_fallo_real_caso_a.png)
+*Figura 6.4:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
-#### 5. Agente — Caso 1: Saludo sin Herramientas
-![Caso 1 del agente](assets/app_caso1_saludo.png)
-*Figura 6.5:* _(descripción pendiente de redactar)_
+### 5. Agente — Caso 1: Saludo sin Herramientas
+![Caso 1 del agente](assets/capturas/agente/01_caso1_saludo_sin_herramientas.png)
+*Figura 6.5:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
-#### 6. Agente — Caso 2: Solo Consulta de Política
-![Caso 2 del agente](assets/app_caso2_politica.png)
-*Figura 6.6:* _(descripción pendiente de redactar)_
+### 6. Agente — Caso 2: Solo Consulta de Política
+![Caso 2 del agente](assets/capturas/agente/02_caso2_solo_politica.png)
+*Figura 6.6:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
-#### 7. Agente — Caso 3: Triaje de Reseña Negativa (Clasificación → Política)
-![Caso 3 del agente](assets/app_caso3_triaje_negativo.png)
-*Figura 6.7:* _(descripción pendiente de redactar)_
+### 7. Agente — Caso 3: Triaje de Reseña Negativa (Clasificación → Política)
+![Caso 3 del agente](assets/capturas/agente/03_caso3_clasificacion_y_politica.png)
+*Figura 6.7:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
-#### 8. Agente — Caso 4: Reseña de Baja Confianza (Revisión Humana)
-![Caso 4 del agente](assets/app_caso4_baja_confianza.png)
-*Figura 6.8:* _(descripción pendiente de redactar)_
+### 8. Agente — Caso 4: Reseña de Baja Confianza (Revisión Humana)
+![Caso 4 del agente](assets/capturas/agente/04_caso4_baja_confianza.png)
+*Figura 6.8:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
-#### 9. Agente — Memoria dentro del Mismo Hilo
-![Memoria en el mismo thread_id](assets/app_memoria_mismo_hilo.png)
-*Figura 6.9:* _(descripción pendiente de redactar)_
+### 9. Agente — Memoria dentro del Mismo Hilo
+![Memoria en el mismo thread_id](assets/capturas/agente/05_memoria_mismo_hilo.png)
+*Figura 6.9:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
-#### 10. Agente — Aislamiento de Memoria tras Reiniciar la Conversación
-![Sin contexto tras el reinicio](assets/app_memoria_tras_reinicio.png)
-*Figura 6.10:* _(descripción pendiente de redactar)_
+### 10. Agente — Aislamiento de Memoria tras Reiniciar la Conversación
+![Sin contexto tras el reinicio](assets/capturas/agente/06_memoria_tras_reinicio.png)
+*Figura 6.10:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
 
 ---
 
-### Enlace al Video Demostrativo
+## Video Demostrativo
 
-> ⚠️ **Video Demostrativo del Sistema:**  
-> **[ENLACE AL VIDEO DEMOSTRATIVO (YouTube / Google Drive)]()**  
-> *(Nota: El enlace se incorporará con permisos públicos de visualización sin requerir inicio de sesión).*
+**[Ver video demostrativo (Google Drive)](https://drive.google.com/file/d/177cMiWQjCKruie1p2ZrsadWDnYiEyp7f/view?usp=sharing)**
 
 ---
 
@@ -489,20 +693,20 @@ _(introducción pendiente de redactar)_
 
 Instrucciones exactas y verificadas para clonar, instalar dependencias, configurar variables de entorno y ejecutar tanto la aplicación interactiva como la suite de evaluación.
 
-### 7.1 Requisitos Previos
+## 7.1 Requisitos Previos
 * **Python:** Versión 3.10 a 3.12 (recomendado 3.11).
 * **Git:** Instalado en el sistema operativo.
 * **Clave de API:** Cuenta en [Google AI Studio](https://aistudio.google.com/) para obtener una `GOOGLE_API_KEY` gratuita.
 
 ---
 
-### 7.2 Clonación y Configuración del Entorno Virtual
+## 7.2 Clonación y Configuración del Entorno Virtual
 
-#### En Windows (PowerShell):
+### En Windows (PowerShell):
 ```powershell
 # 1. Clonar el repositorio
-git clone https://github.com/Steedwar17/TallerIA.git
-cd TallerIA
+git clone https://github.com/Steedwar17/triaje-neuro-agentico.git
+cd triaje-neuro-agentico
 
 # 2. Crear entorno virtual
 python -m venv .venv
@@ -511,11 +715,11 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 ```
 
-#### En Linux / macOS (Bash / Zsh):
+### En Linux / macOS (Bash / Zsh):
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/Steedwar17/TallerIA.git
-cd TallerIA
+git clone https://github.com/Steedwar17/triaje-neuro-agentico.git
+cd triaje-neuro-agentico
 
 # 2. Crear entorno virtual
 python3 -m venv .venv
@@ -526,7 +730,7 @@ source .venv/bin/activate
 
 ---
 
-### 7.3 Instalación de Dependencias
+## 7.3 Instalación de Dependencias
 
 Con el entorno virtual activado, instale las versiones exactas fijadas en el proyecto:
 ```bash
@@ -536,7 +740,7 @@ pip install -r requirements.txt
 
 ---
 
-### 7.4 Configuración de Variables de Entorno
+## 7.4 Configuración de Variables de Entorno
 
 Copie la plantilla de variables de entorno y pegue su clave de Google AI Studio:
 ```bash
@@ -556,13 +760,13 @@ GOOGLE_API_KEY=AIzaSy...tu_clave_aqui
 
 ---
 
-### 7.5 Pesos del Modelo Neuronal
+## 7.5 Pesos del Modelo Neuronal
 
 El archivo entrenado de pesos `models/sentimiento_imdb.keras` pesa **7.58 MB** y ya se encuentra versionado directamente dentro del repositorio Git. No requiere descargas externas vía Git LFS ni comandos adicionales (ver [assets/apuntes/descarga_pesos.md](assets/apuntes/descarga_pesos.md)).
 
 ---
 
-### 7.6 Ejecución de la Aplicación Streamlit
+## 7.6 Ejecución de la Aplicación Streamlit
 
 Para iniciar la aplicación web completa con ambos paneles integrados:
 ```bash
@@ -572,7 +776,7 @@ La aplicación se abrirá automáticamente en su navegador en `http://localhost:
 
 ---
 
-### 7.7 Ejecución de los Notebooks de Evaluación
+## 7.7 Ejecución de los Notebooks de Evaluación
 
 Los notebooks se encuentran en el directorio `notebooks/` y pueden inspeccionarse directamente con sus salidas precomputadas o reejecutarse mediante:
 ```bash
@@ -585,7 +789,7 @@ jupyter nbconvert --to notebook --execute notebooks/evaluacion_agente_u5.ipynb -
 
 ---
 
-### 7.8 Ejecución de la Suite de Pruebas Automatizadas
+## 7.8 Ejecución de la Suite de Pruebas Automatizadas
 
 Para validar las pruebas unitarias y de integración de la aplicación y el agente sin consumir cuota:
 ```bash

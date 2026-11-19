@@ -32,7 +32,7 @@ class TestAppUnificada(unittest.TestCase):
 
     def test_1_render_inicial(self):
         """Verifica que app.py inicie limpiamente sin excepciones."""
-        at = AppTest.from_file("app.py")
+        at = AppTest.from_file(str(RAIZ / "app.py"))
         at.run(timeout=35)
 
         self.assertEqual(len(at.exception), 0, f"Excepciones encontradas: {at.exception}")
@@ -42,7 +42,7 @@ class TestAppUnificada(unittest.TestCase):
 
     def test_2_panel_modelo_inferencia(self):
         """Verifica la clasificación directa en el panel neuronal (Unidad 4)."""
-        at = AppTest.from_file("app.py")
+        at = AppTest.from_file(str(RAIZ / "app.py"))
         at.run(timeout=35)
 
         # Buscar textarea y botón de clasificar
@@ -89,7 +89,7 @@ class TestAppUnificada(unittest.TestCase):
         }
 
         with patch.object(src.agente, "responder", return_value=retorno_mock):
-            at = AppTest.from_file("app.py")
+            at = AppTest.from_file(str(RAIZ / "app.py"))
             at.run(timeout=35)
 
             self.assertEqual(len(at.chat_input), 1)
@@ -106,7 +106,7 @@ class TestAppUnificada(unittest.TestCase):
 
     def test_4_reinicio_conversacion(self):
         """Verifica que el botón de reinicio regenere thread_id y limpie historial."""
-        at = AppTest.from_file("app.py")
+        at = AppTest.from_file(str(RAIZ / "app.py"))
         at.run(timeout=35)
 
         tid_inicial = at.session_state["ag_thread_id"]
@@ -139,7 +139,7 @@ class TestAppUnificada(unittest.TestCase):
         }
 
         with patch.object(src.agente, "responder", return_value=retorno_mock):
-            at = AppTest.from_file("app.py")
+            at = AppTest.from_file(str(RAIZ / "app.py"))
             at.run(timeout=35)
 
             # Inyectar texto proveniente del panel del modelo

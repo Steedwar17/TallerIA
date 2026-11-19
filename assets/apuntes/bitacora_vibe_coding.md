@@ -32,3 +32,10 @@
 - **Por qué estaba mal:** la ejecución volvió a guardar `models/sentimiento_imdb.keras`, un archivo fuera del alcance de la Tarea 15; aunque no se usó como evidencia, modificarlo incidentalmente era una mala práctica de alcance.
 - **Corrección:** se restauró `models/sentimiento_imdb.keras` desde `HEAD`; se conservaron únicamente la celda reproducible del notebook y las dos matrices PNG autorizadas.
 - **Captura:** pendiente en `assets/vibe_coding/`.
+
+## Evidencia general de uso de IA
+- **Conversación compartida (Claude), comprueba el uso de IA:** https://claude.ai/share/e65ce0fc-e890-49b2-9be6-e96301573b1f
+- **Gemini integrado en Google Docs (inicio del proyecto):** generó el código inicial `from datasets import load_dataset` / `ds = load_dataset("stanfordnlp/imdb")` (Tarea 1). Detalle en `assets/vibe_coding/gemini_google_docs_tarea1.md`.
+- **Planes generados por los agentes de Antigravity:**
+  - Verificación de entrega (Tarea 19): `assets/vibe_coding/plan_antigravity_verificacion_tarea19.md`
+  - Evaluación del agente, casos 1 y 2 (Tarea 13): `assets/vibe_coding/plan_antigravity_tarea13.md`

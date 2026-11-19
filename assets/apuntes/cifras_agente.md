@@ -21,19 +21,19 @@ Documento autogenerado a partir de las salidas reales guardadas en `notebooks/ev
 ## 2. Métricas de Ahorro de Tokens (assets/apuntes/medicion_tokens.md)
 
 ### Ahorro Estático (por cada invocación)
-- **System Prompt (6 reglas):** Reducción de 395 a 132 tokens (**66.6% de ahorro**).
-- **Docstring Tool #1 (`clasificar_sentimiento_resena`):** Reducción de 118 a 80 tokens (**32.2% de ahorro**).
-- **Docstring Tool #2 (`consultar_politica_triaje`):** Reducción de 199 a 181 tokens (**9.0% de ahorro**).
+- **System Prompt (6 reglas):** Reducción de 395 a 136 tokens (**65.6% de ahorro**).
+- **Docstring Tool #1 (`clasificar_sentimiento_resena`):** Reducción de 122 a 122 tokens (**0.0% de ahorro**).
+- **Docstring Tool #2 (`consultar_politica_triaje`):** Reducción de 205 a 187 tokens (**8.8% de ahorro**).
 
 ### Ahorro Dinámico en Ejecución (Suite de 3 turnos reales)
-- **Tokens totales antes de optimización:** 7,116 tokens (6,670 entrada + 446 salida) en 6 llamadas LLM.
-- **Tokens totales después de optimización:** 4,263 tokens (3,999 entrada + 264 salida) en 6 llamadas LLM.
-- **Ahorro global neto:** **40.1% de reducción** de consumo de cuota.
+- **Tokens totales antes de optimización:** 7,125 tokens (6,680 entrada + 445 salida) en 6 llamadas LLM.
+- **Tokens totales después de optimización:** 4,712 tokens (4,386 entrada + 326 salida) en 6 llamadas LLM.
+- **Ahorro global neto:** **33.9% de reducción** de consumo de cuota.
 
 ### Medidas de Ahorro Implementadas con Ubicación en Código
-1. `src/agente.py:48-57`: System prompt compacto con 6 directrices concisas (132 tokens).
-2. `src/tool_sentimiento.py:16-29`: Docstring con cláusulas operativas directas (80 tokens).
-3. `src/tool_politicas.py:38-51`: Docstring de políticas sin narrativa superflua (181 tokens).
+1. `src/agente.py:48-57`: System prompt compacto con 6 directrices concisas (136 tokens).
+2. `src/tool_sentimiento.py:16-29`: Docstring con cláusulas operativas directas (122 tokens).
+3. `src/tool_politicas.py:38-51`: Docstring de políticas sin narrativa superflua (187 tokens).
 4. `src/tool_sentimiento.py:44`: Assert duro de salida máxima en Tool #1 `<= 120` caracteres.
 5. `src/tool_politicas.py:84`: Assert duro de salida máxima en Tool #2 `<= 600` caracteres.
 6. `src/agente.py:192`: `max_output_tokens=512` y `temperature=0` para respuestas compactas y deterministas.
