@@ -542,43 +542,43 @@ Introducción de la Sección 6
 
 ### 1. Inferencia Neuronal: Reseña Positiva Clara
 ![Clasificación de reseña positiva](assets/capturas/panel_neuronal/01_resena_positiva.png)
-*Figura 6.1:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
+*Figura 6.1:* Aquí se ingresa una reseña claramente positiva y el modelo neuronal la clasifica como positiva con una confianza alta, el panel muestra la etiqueta y el porcentaje de probabilidad, lo que confirma que el flujo de inferencia funciona como se esperaba.
 
 ### 2. Inferencia Neuronal: Reseña Negativa Clara
 ![Clasificación de reseña negativa](assets/capturas/panel_neuronal/02_resena_negativa.png)
-*Figura 6.2:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
+*Figura 6.2:* Aquí se ingresa una reseña claramente negativa y el modelo la clasifica como negativa con buena confianza, con este caso vemos que el modelo distingue bien ambas polaridades cuando el lenguaje es directo y no deja lugar a dudas.
 
 ### 3. Inferencia Neuronal: Detección de Baja Confianza (Caso B)
 ![Clasificación con baja confianza](assets/capturas/panel_neuronal/03_baja_confianza_caso_b.png)
-*Figura 6.3:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
+*Figura 6.3:* Aquí la reseña es ambigua y la probabilidad queda cerca del punto medio, por eso el sistema la marca como de baja confianza y recomienda una revisión humana, así se evita tomar una decisión automática sobre una predicción poco segura.
 
 ### 4. Fallo Real (Caso A): Predicción Positiva con Confianza Máxima
 ![Caso A en el panel neuronal](assets/capturas/panel_neuronal/04_fallo_real_caso_a.png)
-*Figura 6.4:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
+*Figura 6.4:* Este es un fallo real del modelo, la reseña contiene sarcasmo o un sentimiento mezclado y aun así se predice positiva con confianza máxima, muestra que una probabilidad alta no garantiza una respuesta correcta y que el umbral de confianza por sí solo no detecta este error.
 
 ### 5. Agente — Caso 1: Saludo sin Herramientas
 ![Caso 1 del agente](assets/capturas/agente/01_caso1_saludo_sin_herramientas.png)
-*Figura 6.5:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
+*Figura 6.5:* El usuario envía un simple saludo y el agente responde de forma directa sin llamar a ninguna herramienta, esto demuestra que el agente decide por sí mismo cuándo no necesita clasificar ni consultar políticas, y así ahorra llamadas innecesarias.
 
 ### 6. Agente — Caso 2: Solo Consulta de Política
 ![Caso 2 del agente](assets/capturas/agente/02_caso2_solo_politica.png)
-*Figura 6.6:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
+*Figura 6.6:* El usuario pregunta por una política de atención y el agente usa únicamente la herramienta de consulta de políticas, sin pasar por el clasificador, la respuesta se apoya en el documento recuperado y no en información inventada por el modelo.
 
 ### 7. Agente — Caso 3: Triaje de Reseña Negativa (Clasificación → Política)
 ![Caso 3 del agente](assets/capturas/agente/03_caso3_clasificacion_y_politica.png)
-*Figura 6.7:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
+*Figura 6.7:* Ante una reseña negativa el agente encadena dos herramientas, primero clasifica el sentimiento con la red neuronal y luego consulta la política que corresponde a ese resultado, el orden de las llamadas se puede ver en el panel y la respuesta final combina ambos datos para proponer una acción.
 
 ### 8. Agente — Caso 4: Reseña de Baja Confianza (Revisión Humana)
 ![Caso 4 del agente](assets/capturas/agente/04_caso4_baja_confianza.png)
-*Figura 6.8:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
+*Figura 6.8:* El agente recibe una reseña cuya clasificación llega con baja confianza y en lugar de actuar por su cuenta la deriva a revisión humana, así se respeta la regla definida para los casos dudosos y se reduce el riesgo de una respuesta automática equivocada.
 
 ### 9. Agente — Memoria dentro del Mismo Hilo
 ![Memoria en el mismo thread_id](assets/capturas/agente/05_memoria_mismo_hilo.png)
-*Figura 6.9:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
+*Figura 6.9:* Dentro del mismo hilo el usuario hace una pregunta que depende del mensaje anterior y el agente la responde correctamente, esto se logra porque el checkpointer guarda el historial asociado al mismo thread_id y lo recupera en cada turno.
 
 ### 10. Agente — Aislamiento de Memoria tras Reiniciar la Conversación
 ![Sin contexto tras el reinicio](assets/capturas/agente/06_memoria_tras_reinicio.png)
-*Figura 6.10:* **🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la figura
+*Figura 6.10:* Después de reiniciar la conversación se genera un nuevo thread_id y el agente ya no recuerda lo dicho antes, lo que confirma que la memoria está aislada por hilo y que ninguna información de una sesión pasa a otra.
 
 ---
 
