@@ -102,17 +102,7 @@ triaje-neuro-agentico/
 
 ## 1.3 Propuesta de Valor del Sistema Neuro-Agéntico
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Justificación y Propuesta de Valor
-
-<details>
-<summary>Preguntas guía</summary>
-
-- ¿Qué ventajas operativas y de costos ofrece nuestra red neuronal local (`GlobalAveragePooling1D`) frente a delegar cada clasificación de sentimiento a un LLM comercial vía prompt?
-- ¿Cómo garantizamos la reproducibilidad y calibración de probabilidad con una inferencia determinista en ~15 ms frente a la variabilidad de un LLM?
-- ¿Qué capacidades aporta el agente ReAct que la red neuronal por sí sola no puede resolver (consulta dinámica de políticas, escalamiento, contextualización y memoria de diálogo)?
-- ¿Qué cifras concretas del proyecto respaldan esta sinergia (ej. exactitud de 86.50% de la red local, 100% de cumplimiento en la trayectoria del agente y ahorro del 33.9% en tokens)?
-
-</details>
+Justificación y Propuesta de Valor
 
 En un entorno empresarial real (como una plataforma de streaming que procesa miles de reseñas al día), delegar cada clasificación de sentimiento a un LLM comercial mediante prompts directos resulta inviable. En primer lugar, genera un costo financiero acumulativo insostenible por cada token procesado. En segundo lugar, introduce una latencia de red variable (entre 1.0 y 2.0 segundos por petición), y en tercer lugar, los LLMs son modelos generativos estocásticos que carecen de una calibración de probabilidad determinista y transparente para clasificaciones binarias cerradas.
 
@@ -187,18 +177,7 @@ flowchart TD
 
 ## 2.3 Explicación de la Arquitectura
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Explicación de la Arquitectura
-
-<details>
-<summary>Preguntas guía</summary>
-
-- ¿Cómo interactúan el agente ReAct, la red neuronal local y las políticas internas ante una reseña ambigua?
-- ¿Por qué la inferencia de la red neuronal se encapsula en una `@tool` y no se conecta directamente al frontend?
-- ¿De qué manera la memoria (`MemorySaver`) previene re-ejecutar herramientas costosas en turnos consecutivos?
-- Verificar si la separación modular entre la interfaz Streamlit y el agente refleja fielmente el aislamiento de paneles.
-- Confirmar que la cadena de llamadas entre el agente, la `@tool #1` y los pesos `.keras` documenta adecuadamente el tiempo de inferencia local.
-
-</details>
+Explicación de la Arquitectura
 
 Para explicar la arquitectura primero explicamos el flijo del proyecto, primero el usuario ´por medio de nuestra interfaz hecha con Streamlit envia una consulta o una reseña. Luego el agente que esta basado en un grafo ReAct recibe el mensaje del usuario. Antes de que el agente procese la soplicitud se aplica un filtro de contexto que conserva 8 mensajes recientes que hace que se garantice quie el modelo opere de forma agil sin saturar su limite de tokens sin que se rompa como la idea del dialogo. Aclaramos que si el mensaje contiene un reseña que no ha sido evaluada el agente activa la herramienta de sentimiento, la cual liumpia el texto y ejecuta nuestra red neuronal local, obteniendo una prediccion compacta con su nivel de certeza. Luego el agente toma ese resultado y llama la herramienta de politicas coorporativas ´para asignar el protocolo correspondiente que puede ser entre atencion estandar, ticket prioritario o revision humana. Finalmente se resume todo en una respuesta clara para el usuario, permitioendo auditar en pantalla las herramientas utilizadas y el consumo de recursos.
 
@@ -227,16 +206,13 @@ Asimismo, la memoria conversacional previene re-ejecuciones innecesarias. Si en 
 | Reseñas de `train_final` truncadas | 4,96% |
 | `SEED` | 42 |
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis de datos y preprocesamiento
+Análisis de datos y preprocesamiento
 
-<details>
-<summary>Preguntas guía</summary>
+Las reseñas tienen longitudes muy distintas entre sí, la mitad tiene menos de 172 tokens, el promedio está en 230 y la más larga llega a 2.459, lo que nos dice que hay unas pocas reseñas muy largas que estiran la distribución, si hubiéramos usado el máximo casi todas las secuencias quedarían llenas de ceros de relleno y si hubiéramos usado la mediana cortaríamos la mitad de las reseñas, por eso elegimos el percentil 95 como longitud de secuencia (SEQ_LEN = 585), un tamaño razonable que deja completo el 95% de las reseñas.
 
-- ¿Por qué elegimos `SEQ_LEN=585` al observar p95=585,0, mediana=172 y máximo=2.459?
-- ¿Qué implica que el 4,96% de `train_final` se trunque?
-- ¿Qué evidencia del notebook respalda que el ajuste del vocabulario usó solo `train_final`?
+Con ese límite el 4,96% de las reseñas de train_final, unas 990, pasa de los 585 tokens, en esos casos TextVectorization se queda con los primeros 585 y descarta el resto, así que podemos perder el cierre de la reseña, que a veces es justo donde el autor da su veredicto, lo aceptamos porque es un porcentaje bajo, y en el caso contrario, el de las reseñas cortas, el relleno no altera el resultado porque usamos mask_zero=True y el promedio ignora esas posiciones vacías.
 
-</details>
+El vocabulario se construyó únicamente con train_final, así que no hay fuga de datos, y el notebook lo respalda de tres formas, en la celda 18 lo único que recibe adapt() es textos_adapt = texts_train, en la celda 25 la auditoría verifica con asserts que textos_adapt is texts_train y que los índices de entrenamiento y validación no se cruzan y además el porcentaje de palabras desconocidas [UNK] aumenta a medida que nos alejamos del entrenamiento (3,291% en train, 3,638% en validación y 4,043% en test), que es justo lo que se espera si validación y test nunca participaron en el ajuste, por último las tres particiones quedaron balanceadas 50/50 y el split unsupervised no se usó.
 
 ## 3.2 Arquitectura e hiperparámetros
 
@@ -251,16 +227,11 @@ Asimismo, la memoria conversacional previene re-ejecuciones innecesarias. Si en 
 | Batch / épocas | 64 / 10 | 64 / 10 |
 | Parámetros totales | 640.545 | 640.545 |
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis de la arquitectura e hiperparámetros
+Análisis de la arquitectura e hiperparámetros
 
-<details>
-<summary>Preguntas guía</summary>
+Cada reseña ya limpia pasa primero por TextVectorization, que la convierte en una secuencia de 585 números, uno por palabra, luego el Embedding transforma cada número en un vector de 32 valores que representa el significado de esa palabra, después GlobalAveragePooling1D promedia los vectores de las palabras reales y deja un solo vector de 32 por reseña, ese vector pasa por una capa Dense de 16 neuronas con ReLU y finalmente por una neurona con sigmoide que entrega la probabilidad de que la reseña sea positiva, entre los dos modelos solo cambiamos una cosa, al mejorado le agregamos dos capas Dropout de 0,5, una después del pooling y otra después de la capa densa, todo lo demás se mantuvo igual (vocabulario, longitud, embedding, capa densa, Adam con learning rate de 0,001, batch, épocas y semilla 42), de esta forma cualquier diferencia en los resultados se le puede atribuir únicamente a la regularización.
 
-- ¿Qué ruta siguen los datos desde la secuencia de 585 tokens hasta la salida sigmoide?
-- ¿Qué cambió exactamente entre ambos modelos y qué permaneció constante?
-- ¿Por qué los dos modelos tienen 640.545 parámetros pese a incorporar Dropout?
-
-</details>
+Los dos modelos tienen 640.545 parámetros porque Dropout no tiene pesos que aprender, durante el entrenamiento solo apaga neuronas al azar y al momento de predecir no hace nada, la cuenta sale del Embedding con 20.000 × 32 = 640.000, la capa densa con 32 × 16 + 16 = 528 y la salida con 16 + 1 = 17, lo que muestra que el embedding concentra el 99,9% de los parámetros y que la capacidad del modelo está en cómo representa las palabras y no en las capas densas.
 
 ## 3.3 Curvas de entrenamiento vs. validación
 
@@ -268,16 +239,11 @@ Asimismo, la memoria conversacional previene re-ejecuciones innecesarias. Si en 
 
 ![Curvas de accuracy, base vs. mejorado](assets/curvas_accuracy_base_vs_mejorado.png)
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis de las curvas de entrenamiento vs. validación
+Análisis de las curvas de entrenamiento vs. validación
 
-<details>
-<summary>Preguntas guía</summary>
+En el modelo base el val_loss baja hasta la época 4, donde llega a su mínimo de 0,2585, y a partir de la época 5 empieza a subir hasta 0,3734 en la época 10 (+0,1149), mientras tanto el loss de entrenamiento sigue bajando hasta 0,0274, así que desde la época 5 las curvas se separan y el modelo empieza a memorizar los datos de entrenamiento en lugar de aprender a generalizar, generando sobreajuste, el modelo mejorado también alcanza su mejor punto en la época 4 con un val_loss de 0,2584, pero después sube bastante menos (+0,0835, hasta 0,3418) y su loss de entrenamiento termina más alto (0,0770), lo que indica que el Dropout sí logra frenar la memorización. La brecha de accuracy entre entrenamiento y validación confirma lo mismo, en la época 4 es de 0,0473 en el base (0,9481 − 0,9008) y de 0,0285 en el mejorado (0,9277 − 0,8992), y para la época 10 crece a 0,1054 en el base (0,9968 − 0,8914) frente a 0,0863 en el mejorado (0,9807 − 0,8944), es decir, con Dropout la distancia entre lo que el modelo logra en entrenamiento y lo que logra con datos nuevos siempre es menor.
 
-- ¿En qué época se separan las curvas de `loss` del modelo base y qué valores de la tabla lo muestran?
-- ¿Cómo cambió la brecha de accuracy entrenamiento-validación de 0,1054 a 0,0863?
-- ¿Qué muestran las épocas 4 y 10 para cada modelo?
-
-</details>
+En conclusión el Dropout reduce el sobreajuste pero no lo elimina, ambos modelos empiezan a sobreajustarse después de la época 4, que sería el punto ideal para detener el entrenamiento (con early stopping nos habríamos quedado con esos pesos) y vale aclarar que el accuracy de entrenamiento del modelo mejorado se mide con el Dropout activo, por eso su curva de entrenamiento se ve un poco más baja de lo que realmente es.
 
 ## 3.4 Comparación en el conjunto de prueba
 
@@ -295,16 +261,11 @@ Asimismo, la memoria conversacional previene re-ejecuciones innecesarias. Si en 
 | Modelo base | `[[11010, 1490], [2020, 10480]]` |
 | Modelo mejorado | `[[11149, 1351], [2024, 10476]]` |
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis de la comparación en el conjunto de prueba
+Análisis de la comparación en el conjunto de prueba
 
-<details>
-<summary>Preguntas guía</summary>
+En el conjunto de prueba el modelo mejorado gana 0,54 puntos de accuracy (de 0,8596 a 0,8650), que en la práctica son 135 errores menos sobre 25.000 reseñas (de 3.510 a 3.375), además su test loss baja de 0,4638 a 0,4198, lo que quiere decir que cuando se equivoca lo hace con menos exceso de confianza, es una mejora real aunque pequeña, al comparar las matrices de confusión se ve que casi toda la mejora está en los falsos positivos, que bajan de 1.490 a 1.351 (139 menos), mientras los falsos negativos quedan prácticamente iguales de 2.020 a 2.024, esto es útil para el triaje porque cuando el modelo dice positivo acierta más y la precisión pasa de 87,6% a 88,6% y se nos escapan menos quejas reales clasificadas como felicitaciones, también se nota que ambos modelos se equivocan más leyendo reseñas positivas como negativas (cerca de 2.020) que al revés, lo que genera tickets de insatisfacción innecesarios, pero ese es el error menos grave para el negocio.
 
-- ¿Qué diferencia observas entre las métricas de prueba 0,8596 y 0,8650?
-- ¿Qué celdas de las dos matrices conviene contrastar para la decisión de triaje?
-- ¿Qué relación tienen las matrices con los 3.375 errores del mejorado?
-
-</details>
+Los 3.375 errores del modelo mejorado son exactamente la suma de sus falsos positivos y falsos negativos (1.351 + 2.024) y ninguno cae en los 99 textos que se repiten entre train y test, así que esos duplicados no inflan el resultado, por otro lado el accuracy en test (0,8650) queda unos 3 puntos por debajo del de validación en la misma época 10 (0,8944), algo esperable porque la validación salió del mismo split de entrenamiento y comparte películas con él, mientras que en IMDB el test está formado por películas distintas y además trae más palabras desconocidas (4,04% frente a 3,64% en validación).
 
 ## 3.5 Análisis de un fallo real
 
@@ -320,18 +281,11 @@ Asimismo, la memoria conversacional previene re-ejecuciones innecesarias. Si en 
 | Fragmento literal | `Primary plot!Primary direction!Poor interpretation.` |
 | Fuente | `notebooks/entrenamiento_u4.ipynb`, celda 58 |
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Análisis del fallo real
+Análisis del fallo real
 
-<details>
-<summary>Preguntas guía</summary>
+Al ejecutar el modelo encontramos que el fallo nace en el preprocesamiento y no en la red, la limpieza borra los signos de puntuación sin dejar un espacio en su lugar, así que el texto termina convertido en primary plotprimary directionpoor interpretation, las palabras pegadas plotprimary y directionpoor no existen y se vuelven [UNK], de modo que el modelo solo ve primary, [UNK], [UNK] e interpretation, y la palabra poor, que es la que carga todo el sentido negativo, desaparece antes de llegar a la red aunque sí está en el vocabulario, lo comprobamos con dos pruebas sencillas, el mismo texto con un espacio después de cada signo de exclamación da negativo con confianza 1,0 y la frase poor interpretation sola también da negativo con 1,0, por eso la explicación inicial de que el modelo le dio demasiado peso a primary se queda corta, el problema real es que nunca llegó a ver la palabra poor, el modelo asignó una probabilidad positiva de 1,000000 a una reseña que en realidad es negativa, es decir, se equivocó con certeza absoluta, y esto pasa porque en una reseña tan corta el promedio del pooling depende de solo dos o tres palabras, lo que hace que la sigmoide se sature en 0 o en 1 (por ejemplo la palabra primary sola ya da 1,0).
 
-- ¿Qué palabras o estructura del texto de cuatro palabras pudieron confundir al modelo?
-- ¿Cómo se relacionan la predicción positiva 1,000000 y el valor real negativo?
-- ¿Por qué este caso exige discutir la confianza además de la etiqueta predicha?
-
-</details>
-
----
+Para el triaje este caso es delicado porque el umbral de baja confianza de 0,70 no lo detecta, el agente lo trataría como un positivo seguro (POL_POS) y nunca lo enviaría a revisión humana, lo que demuestra que una confianza alta no garantiza una predicción correcta, como mejora convendría reemplazar la puntuación por un espacio en lugar de borrarla y tratar con más cuidado las reseñas muy cortas.
 
 # Sección 4 · Diseño del Agente y Matriz de Evaluación (Unidad 5)
 
@@ -377,37 +331,17 @@ El agente dispone de dos herramientas especializadas con responsabilidades no su
        """
    ```
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Análisis de Diseño de Herramientas
-
-<details>
-<summary>Preguntas guía</summary>
-
-- ¿Qué garantiza que la `@tool #1` no se ejecute dos veces sobre la misma reseña dentro de una misma conversación?
-- ¿Por qué la `@tool #2` acepta `sentimiento` y `confianza` opcionales en lugar de obligar al agente a inferirlos siempre?
-
-</details>
+Análisis de Diseño de Herramientas
 
 En la elavoracion del trabajo tuvimos que tener en cuenta que para que la herramienta del sentimiento no se ejecute innecesariamente mas de una cez sobre el mismo texto implementamos una barrera tecnica. en primer lugar, el prompt del sistema y el docstring de la herramienta contienen instrucciones explícitas de exclusión que le prohíben al agente re-clasificar contenido ya procesado en la conversación. En segundo lugar, gracias a la memoria conversacional, el agente revisa el historial y detecta si ya existe una predicción previa guardada. Al confirmar que ya cuenta con el veredicto de la red neuronal, el agente salta directamente al siguiente paso (consultar la política o responder), ahorrando tiempo y evitando sobrecostos de procesamiento.
 
 Tambien, la herramienta de políticas de triaje fue diseñada como opcionales. Esto lo hicimos porque se desacopla la herramienta y le permite operar en dos escenarios muy distintos: 1. Flujo guiado por el modelo neuronal: Cuando se analiza una reseña completa, el agente envía el sentimiento y la confianza numérica devueltos por la primera herramienta, permitiendo que la política aplique reglas lógicas de certeza (activando de inmediato la revisión humana si la confianza cae por debajo del 70%). 2. Consulta normativa directa: Si un usuario o supervisor pregunta directamente por un protocolo interno (por ejemplo: ¿qué política aplica si un cliente amenaza con demandar?), no existe una reseña previa ni cifras de confianza. Al ser opcionales, la herramienta no falla ni fuerza al agente a inventar datos; simplemente busca en el catálogo de reglas mediante palabras clave y devuelve la política correspondiente
 
-
----
-
 ## 4.2 Docstrings
 
 Los docstrings actúan como el manual de operaciones del planificador del LLM. Su diseño optimizado incluye directrices explícitas de activación positiva (`Usala:`) y exclusión negativa (`NO usar:`).
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Impacto Operativo de los Docstrings
-
-<details>
-<summary>Preguntas guía</summary>
-
-- ¿Qué frase exacta del docstring de la `@tool #1` impidió que el modelo la invocara durante el saludo del Caso 1?
-- ¿Qué ajuste realizamos entre la Tarea 6 y la Tarea 8 para evitar que el agente alucinara llamadas duplicadas?
-- ¿Cómo influyó la reducción de tokens en los docstrings sobre el consumo total de contexto en turnos multi-llamada?
-
-</details>
+Impacto Operativo de los Docstrings
 
 Encontramosque en los agentes basados en LLM, uno de los errores más comunes es la sobre-activasion de herramientas que basicamente es cuando el agente se vuelve ansioso y ejecuta herramientas ante cualquier saludo casual. Para mitigar esto, estructuramos los docstrings bajo una lógica de directrices positivas (Usala cuando...) y exclusiones negativas taxativas (NO usar...). La frase determinante en la primera herramienta fue:
 
@@ -417,10 +351,7 @@ Gracias a esta instrucción prohibitiva explícita, en el Caso 1 de evaluación 
 
 Entre la Tarea 6 y la Tarea 8 realizamos una depuración profunda en la redacción de los docstrings. Inicialmente eran textos largos y descriptivos que explicaban detalles internos del modelo (como capas o librerías), lo que confundía al planificador y provocaba llamadas desordenadas o duplicadas. Al sintetizarlos como contratos operativos concisos, eliminamos las alucinaciones y delimitamos claramente la frontera entre ambas herramientas: la Tool #1 solo analiza reseñas no clasificadas y la Tool #2 solo atiende reglas y políticas de triaje.
 
-Esta optimización tuvo además un impacto cuantitativo directo en el consumo de contexto. Dado que la definición de las herramientas se concatena y reenvía al modelo en cada paso intermedio del razonamiento, compactar el docstring de la Tool #1 (de 118 a 80 tokens, un 32.2% de ahorro) y el de la Tool #2 (de 199 a 181 tokens, un 9.0% de ahorro) redujo drásticamente el consumo acumulado de tokens de entrada en turnos complejos de doble llamada
-
-
----
+Esta optimización tuvo además un impacto cuantitativo directo en el consumo de contexto. Dado que la definición de las herramientas se concatena y reenvía al modelo en cada paso intermedio del razonamiento, compactar el docstring de la Tool #1 (de 118 a 80 tokens, un 32.2% de ahorro) y el de la Tool #2 (de 199 a 181 tokens, un 9.0% de ahorro) redujo drásticamente el consumo acumulado de tokens de entrada en turnos complejos de doble llamada.
 
 ## 4.3 Memoria y `thread_id`
 
@@ -458,21 +389,11 @@ if st.button("🔄 Reiniciar conversación", help="Genera un nuevo thread_id y v
     st.rerun()
 ```
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Explicación de la Memoria y Reinicio
-
-<details>
-<summary>Preguntas guía</summary>
-
-- ¿Cómo demostramos empíricamente en la prueba D y E que el agente recuerda en el mismo `thread_id` y olvida al reiniciarlo?
-- ¿Por qué almacenar el agente en `@st.cache_resource` es seguro entre múltiples usuarios que acceden simultáneamente?
-- ¿Qué papel cumple `trim_messages` en evitar desbordamientos de contexto en conversaciones largas?
-
-</details>
+Explicación de la Memoria y Reinicio
 
 Para validar el comportamiento de la memoria conversacional implementamos dos pruebas. En la primera prueba tras clasificar una reseña en un hilo activo, le preguntamos al agente en el siguiente turno: ¿cuál fue la confianza de esa reseña?. El agente respondió con la cifra exacta devuelta por la red neuronal recuperándola directamente del historial del checkpointer sin necesidad de volver a ejecutar la herramienta. Posteriormente, en la segunda prueba que hicimops generamos un nuevo hilo y repetimos la misma pregunta; el agente respondió indicando que no contaba con contexto previo y verificamos que el nuevo hilo iniciaba en blanco, demostrando un borrado y aislamiento perfecto entre sesiones.
 
 Finalmente, para evitar desbordamientos de contexto y sobrecostos en conversaciones extensas, implementamos un recorte dinámico de historial de esta manera restringiendo la memoria a una ventana móvil de los 8 mensajes más recientes y preservando siempre el prompt del sistema. En este mecanismo, configurar el parámetro `allow_partial=False` fue un requisito crítico para la API de Gemini: si un recorte divide un mensaje del agente con llamadas a herramientas (AIMessage.tool_calls) y deja huérfano su correspondiente mensaje de respuesta (ToolMessage), Google AI Studio rechaza la petición con un error 400 (Bad Request). Al exigir `allow_partial=False`, LangChain solo descarta bloques completos de interacción, garantizando estabilidad total en turnos prolongados.
-
 
 Para validar el comportamiento de la memoria conversacional implementamos dos pruebas. En la primera prueba tras clasificar una reseña en un hilo activo, le preguntamos al agente en el siguiente turno: ¿cuál fue la confianza de esa reseña?. El agente respondió con la cifra exacta devuelta por la red neuronal recuperándola directamente del historial del checkpointer sin necesidad de volver a ejecutar la herramienta. Posteriormente, en la segunda prueba que hicimops generamos un nuevo hilo y repetimos la misma pregunta; el agente respondió indicando que no contaba con contexto previo y verificamos que el nuevo hilo iniciaba en blanco, demostrando un borrado y aislamiento perfecto entre sesiones.
 
@@ -504,23 +425,13 @@ Para operar de forma sostenible dentro de la capa gratuita de Google AI Studio (
 | **Caso 3: Reseña completa** | 3,835 / 199 / 4,034 | 2,420 / 159 / 2,579 | **36.1%** |
 | **TOTAL SUITE (3 turnos)** | **6,680 / 445 / 7,125** | **4,386 / 326 / 4,712** | **33.9%** |
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Justificación de las Medidas de Ahorro
-
-<details>
-<summary>Preguntas guía</summary>
-
-- ¿Cuál medida de ahorro tuvo el mayor impacto cuantitativo y por qué?
-- ¿Cómo logramos recortar el 65.6% del system prompt sin comprometer ninguna de las 6 reglas de comportamiento?
-- ¿Por qué era crítico configurar `allow_partial=False` en el recorte de historial para la API de Gemini?
-
-</details>
+Justificación de las Medidas de Ahorro
 
 De las 9 medidas implementadas, la que generó el mayor impacto cuantitativo fue la compresión del System Prompt, el cual redujimos de 395 a solo 132 tokens (un ahorro neto del 66.6%). La razón de su enorme impacto radica en el efecto multiplicador del ciclo ReAct: mientras que los mensajes del usuario o las salidas de las herramientas solo se envían en su respectivo turno, el prompt del sistema se inyecta como prefijo obligatorio en absolutamente todas las llamadas que se hacen al LLM. En un flujo completo donde el agente primero planifica, luego invoca la Tool #1, después la Tool #2 y finalmente redacta la respuesta, el system prompt se reenvía hasta tres o cuatro veces en un solo turno de conversación. Reducir 263 tokens en esa plantilla base se traduce en miles de tokens ahorrados a lo largo de una sesión.
 
 Para lograr esta reduccion sin comprometer el comportamiento del agente eliminamos las cosas que no aportaban como la prosa, los fomralismos innecesarios y las explicaciones pedagogicas extensas. En cambio de eso resumimos las instrucciones bajo una sintaxis imperativa y contractual organizada en seis directrices estrictas: rol de triaje, prohibición de re-clasificar, condición de activación de la Tool #1, flujo de argumentos hacia la Tool #2, formato mínimo de respuesta al usuario y mandato de no corregir a la red neuronal en casos de incertidumbre. Este diseño de alta densidad semántica garantizó que el agente mantuviera un 100% de cumplimiento operativo utilizando únicamente una fracción del contexto original.
 
 Esta estrategia se complementó con límites duros en las salidas de las herramientas, obligándolas a devolver JSON compacto en una sola línea que consume un espacio mínimo en el historial. Asimismo, implementamos un limitador de ritmo en memoria a 0.25 peticiones por segundo bindando a la aplicación contra bloqueos por error HTTP 429 en la capa gratuita de Gemini. Por último, en el recorte de historial con trim_messages, el parámetro allow_partial=False fue vital: garantizó que al ahorrar tokens jamás se descartaran mensajes a medias, evitando romper la pareja indivisible entre la llamada a la herramienta y su resultado, lo que habría provocado un fallo de validación en la API. En conjunto, estas medidas lograron un ahorro global medido del 40.1% en la suite de evaluación (reduciendo de 7,116 a 4,263 tokens)
-
 
 De las 9 medidas implementadas, la que generó el mayor impacto cuantitativo fue la compresión del System Prompt, el cual redujimos de 395 a solo 132 tokens (un ahorro neto del 66.6%). La razón de su enorme impacto radica en el efecto multiplicador del ciclo ReAct: mientras que los mensajes del usuario o las salidas de las herramientas solo se envían en su respectivo turno, el prompt del sistema se inyecta como prefijo obligatorio en absolutamente todas las llamadas que se hacen al LLM. En un flujo completo donde el agente primero planifica, luego invoca la Tool #1, después la Tool #2 y finalmente redacta la respuesta, el system prompt se reenvía hasta tres o cuatro veces en un solo turno de conversación. Reducir 263 tokens en esa plantilla base se traduce en miles de tokens ahorrados a lo largo de una sesión.
 
@@ -544,16 +455,7 @@ Resultados reproducibles extraídos de [notebooks/evaluacion_agente_u5.ipynb](no
 - **Casos con resultado correcto sobre el total:** 4 de 4 (**100.0%**)
 - **Validación de trayectoria:** Determinada exclusivamente desde `AIMessage.tool_calls` a través de `herramientas_invocadas` en `src/agente.py` y verificada en `src/evaluacion.py`. Cero inspecciones sobre la respuesta final de texto.
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Análisis de la Matriz de Evaluación
-
-<details>
-<summary>Preguntas guía</summary>
-
-- ¿Qué demuestra que el Caso 1 no active herramientas y el Caso 2 active solo la de políticas?
-- ¿Cómo se garantiza en el Caso 3 que los argumentos de la `@tool #2` coincidan exactamente con la inferencia de la red local?
-- En el Caso 4, ¿por qué fue fundamental que el sistema comunicara la baja confianza (0.5835) y derivara a moderación humana en lugar de automatizar una decisión errónea?
-
-</details>
+Análisis de la Matriz de Evaluación
 
 La diferencia entre el caso 1 y el caso 2 demuestra la capacidad de discriminacion del agnete, en el caso 1 'Hola, ¿qué puedes hacer por mí?', el agente identificó un simple saludo de bienvenida y respondió cordialmente sin activar ninguna herramienta de esta manera consumiendo un minimo de tokens de apenas 609. En cambio, en el caso 2 '¿Qué política debo aplicar si un cliente amenaza con demandar?' reconoció una consulta normativa sobre protocolos de escalamiento legal y activó exclusivamente la herramienta de políticas. Esto comprueba que el agente no opera como un script rígido que dispara herramientas por reflejo, sino que planifica selectivamente según la intención del usuario, ahorrando cómputo y preservando cuota.
 
@@ -597,33 +499,30 @@ Registro unificado de incidencias, errores de librerías, APIs desactualizadas y
 
 ![Claude: prompt actualizado de la Tarea 17](assets/vibe_coding/03_claude_prompt_tarea17_actualizado.png)
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — descripción de la evidencia de uso de IA del modelo (Tareas 3, 5, 9 y 15)
+descripción de la evidencia de uso de IA del modelo (Tareas 3, 5, 9 y 15)
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — descripción de la evidencia de uso de IA del agente (Tareas 6, 10, 12 y 16)
+En la Tarea 3 usamos Claude Sonnet 5.5 desde Antigravity para generar las celdas 29 a 37 del notebook con el modelo base, la IA reutilizó las variables que ya venían de la Tarea 1 (MAX_LEN = 585, SEED y vocab) sin recalcularlas y sin tocar el conjunto de test, la evidencia está en assets/vibe_coding/vibe_coding_tarea3.md junto con sus 3 capturas.
+
+En la Tarea 5 la misma IA construyó el modelo mejorado cambiando únicamente el Dropout, y durante la ejecución detectó un error suyo, en Keras 3.10 metrics_names devuelve loss y compile_metrics en lugar de loss y accuracy, así que tuvo que corregir el assert, la evidencia está en assets/vibe_coding/vibe_coding_tarea5.md junto con sus 5 capturas.
+
+En la Tarea 9 la IA propuso llamar a modelo.predict pasándole un arreglo NumPy con dtype=object, algo que Keras 3 rechaza, y lo corregimos llamando al modelo con tf.constant (episodio 2 de la tabla 5.1).
+
+En la Tarea 15 Codex volvió a ejecutar todo el notebook para generar las matrices de confusión y de paso sobrescribió los pesos sentimiento_imdb.keras, que estaban por fuera del alcance de la tarea, así que los restauramos desde HEAD (episodio 5 de la tabla 5.1).
 
 ---
 
 ## 5.3 Reflexiones del Equipo
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Steedwar)}}$** — Reflexión Crítica sobre el Modelado y Vibe Coding
+Reflexión Crítica sobre el Modelado y Vibe Coding - Steedwar
 
-<details>
-<summary>Preguntas guía</summary>
+Usar asistentes de IA con Keras 3 exige cuidado porque muchas veces proponen código pensado para Keras 2 que ahora falla o se comporta distinto, como pasar arreglos con dtype=object, confiar en metrics_names o guardar funciones de limpieza sin registrarlas con register_keras_serializable, por eso validamos cada paso con asserts contra la fuga de datos, semillas fijas, una prueba de ida y vuelta del archivo .keras (el modelo cargado en un proceso nuevo da exactamente las mismas predicciones, con diferencia máxima de 0,0) y una réplica en Python puro de la limpieza del notebook para que la inferencia sea idéntica al entrenamiento, y también aprendimos a limitar el alcance de la IA, porque Codex sobrescribió los pesos al reejecutar el notebook y lo detectamos revisando los cambios con git.
 
-- ¿Qué precauciones técnicas se deben tener al usar asistentes de IA para el entrenamiento y exportación de modelos en Keras 3?
-- ¿Cómo afectó la incompatibilidad de tipos `dtype=object` la fase de inferencia y cómo se detectó?
+Con el caso de dtype=object la IA sugirió pasar el texto como un arreglo NumPy de tipo object y Keras 3 lo rechazó con el error ValueError Invalid dtype object, lo detectamos a tiempo porque src/prueba_inferencia.py falló desde la primera llamada, antes de que el error llegara a la aplicación o al agente, y lo corregimos llamando al modelo con tf.constant y training=False.
 
-</details>
+La lección más importante nos la dejó el fallo real, un preprocesamiento que parecía correcto terminó borrando información en silencio (se perdió la palabra poor) sin lanzar ningún error, lo que nos enseñó que un código que corre sin errores no es lo mismo que un código correcto y que siempre hay que verificar con datos reales.
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — Reflexión Crítica sobre el Agente y Vibe Coding
 
-<details>
-<summary>Preguntas guía</summary>
-
-- ¿Por qué la supervisión humana y las pruebas automatizadas con asserts estrictos fueron indispensables para detectar los errores de la IA?
-- ¿Qué riesgos habría implicado aceptar ciegamente la propuesta de modelo `gemini-2.0-flash` o el parche incorrecto de `AppTest`?
-
-</details>
+Reflexión Crítica sobre el Agente y Vibe Coding - Juan Diego
 
 Entendimos que el desarrollo asistido por modelos generativos ofrece una velocidad impresionante para prototipar, pero que introduce un riesgo el cual consta de que genera una ilusion de que el codigo funciona simplemente por que es visualmente correcta o no arroja errores visibles a primera vista. En arquitecturas agénticas, donde intervienen modelos probabilísticos y múltiples herramientas, los errores no siempre generan excepciones de sintaxis; a menudo se manifiestan como llamadas duplicadas a APIs, omisión de directrices o consumo excesivo de contexto. En este proyecto, la supervisión humana complementada con una batería de pruebas automatizadas y asserts estrictos donde esto nos deja como unico fltro para encontrar las fallas de la IA antes de que se dañe el entorno de produccion y conyebe a multiples conflictos, y mas que la ser un trabajo colaborativo debiamos de entender cualquier decision tomada.
 
@@ -637,7 +536,7 @@ Los incidentes documentados en nuestra bitácora evidencian los peligros que hab
 
 # Sección 6 · Demostración de la Interfaz (Streamlit)
 
-**🔴 ${\color{red}\textbf{ESCRIBE AQUI (Juan Diego)}}$** — introducción de la Sección 6
+Introducción de la Sección 6
 
 ## Galería de Evidencias de la Aplicación
 
