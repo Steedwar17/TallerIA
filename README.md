@@ -45,7 +45,7 @@ Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Ne
 ## Estructura del Repositorio
 
 ```text
-TallerIA/
+triaje-neuro-agentico/
 ├── README.md                       # Informe técnico (7 secciones)
 ├── requirements.txt                # Dependencias fijadas
 ├── .env.example                    # Plantilla: GOOGLE_API_KEY=tu_clave_aqui
@@ -587,8 +587,8 @@ Instrucciones exactas y verificadas para clonar, instalar dependencias, configur
 ### En Windows (PowerShell):
 ```powershell
 # 1. Clonar el repositorio
-git clone https://github.com/Steedwar17/TallerIA.git
-cd TallerIA
+git clone https://github.com/Steedwar17/triaje-neuro-agentico.git
+cd triaje-neuro-agentico
 
 # 2. Crear entorno virtual
 python -m venv .venv
@@ -600,8 +600,8 @@ python -m venv .venv
 ### En Linux / macOS (Bash / Zsh):
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/Steedwar17/TallerIA.git
-cd TallerIA
+git clone https://github.com/Steedwar17/triaje-neuro-agentico.git
+cd triaje-neuro-agentico
 
 # 2. Crear entorno virtual
 python3 -m venv .venv
