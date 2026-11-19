@@ -1,6 +1,6 @@
 # Sistema Neuro-Agéntico de Triaje de Reseñas de Streaming (PLN + Agente ReAct)
 
-Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Neuro-Agénticos Interactivos** — Maestría en Inteligencia Artificial Universidad de Boyacá.
+Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Neuro-Agénticos Interactivos** — Materia de Inteligencia Artificial, Universidad de Boyacá.
 
 
 ## Contenido
