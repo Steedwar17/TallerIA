@@ -1,6 +1,6 @@
 # Sistema Neuro-Agéntico de Triaje de Reseñas de Streaming (PLN + Agente ReAct)
 
-Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Neuro-Agénticos Interactivos** — Maestría en Inteligencia Artificial / Pregrado, Universidad de Boyacá.
+Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Neuro-Agénticos Interactivos** — Maestría en Inteligencia Artificial Universidad de Boyacá.
 
 ---
 
@@ -33,6 +33,23 @@ Repositorio desarrollado para el **Taller Evaluativo Unidades 4 y 5: Sistemas Ne
 > - ¿Cómo garantizamos la reproducibilidad y calibración de probabilidad con una inferencia determinista en ~15 ms frente a la variabilidad de un LLM?
 > - ¿Qué capacidades aporta el agente ReAct que la red neuronal por sí sola no puede resolver (consulta dinámica de políticas, escalamiento, contextualización y memoria de diálogo)?
 > - ¿Qué cifras concretas del proyecto respaldan esta sinergia (ej. exactitud de 86.50% de la red local, 100% de cumplimiento en la trayectoria del agente y ahorro del 40.1% en tokens)?
+>
+> <!-- IDEAS Y DATOS CLAVE PARA LA REDACCIÓN DEL EQUIPO (Borra este comentario al terminar):
+> 1. PUNTOS TÉCNICOS CENTRALES:
+>    - El problema de usar solo un LLM vía prompt: Un LLM comercial para clasificar millones de reseñas resulta costoso e ineficiente: latencia de red variable (~1,000 a 2,000 ms), costo financiero acumulativo por cada token de entrada/salida, variabilidad estocástica en respuestas y riesgo de respuestas poco calibradas.
+>    - Ventajas de nuestra red neuronal local (Unidad 4): Arquitectura ligera especializada (Embedding + GlobalAveragePooling1D + Dense con Dropout en Keras 3). Es determinista, corre localmente con costo marginal de $0, toma apenas ~9.9 ms por inferencia con caché, y ofrece probabilidades matemáticas calibradas y evaluadas rigurosamente sobre 25,000 reseñas de test (86.50% de accuracy).
+>    - Qué aporta el Agente ReAct (Unidad 5): La red neuronal es un clasificador unidimensional; no puede tomar acciones de negocio, no conoce protocolos de atención al cliente ni mantiene memoria conversacional. El agente razona con base en la certeza de la red, consulta políticas internas (POL_POS, POL_NEG, POL_REV), genera respuestas contextualizadas y decide si escalar casos ambiguos a moderación humana.
+>    - La propuesta de valor de la sinergia neuro-agéntica: Dividir la carga de trabajo óptimamente: la red local resuelve la clasificación dura de forma instantánea y gratuita; el agente LLM aporta flexibilidad semántica y orquestación con un consumo mínimo de tokens (optimizado con un 40.1% de ahorro en contexto).
+> 2. CIFRAS Y DATOS EXACTOS A CITAR:
+>    - Exactitud en test de la red: 86.50% (test loss: 0.4198) en 25,000 reseñas IMDB.
+>    - Tiempo de inferencia: ~405 ms primera carga, ~9.9 ms con caché en memoria.
+>    - Desempeño del agente: 100% de cumplimiento en trayectorias de herramientas (4/4 casos) y 100% en respuestas.
+>    - Optimización de tokens: Reducción del 40.1% en consumo de tokens (de 7,116 a 4,263 tokens medidos).
+> 3. ESTRUCTURA RECOMENDADA EN 3 PÁRRAFOS:
+>    - Párrafo 1: Ineficiencias de delegar la clasificación de reseñas a llamadas brutas a un LLM (costo por token, latencia, variabilidad).
+>    - Párrafo 2: Fortalezas de nuestra red neuronal local en Keras 3 (eficiencia, costo cero, latencia de ~10 ms, exactitud de 86.50%).
+>    - Párrafo 3: Cómo el agente ReAct integra esa predicción con las políticas corporativas, cerrando el ciclo de triaje inteligente con memoria y bajo consumo.
+> -->
 >
 > *(Redacten aquí la justificación con sus propias palabras)*
 
@@ -104,12 +121,12 @@ flowchart TD
 ```
 
 > ### [ESCRIBE AQUÍ (Juan Diego)] — Explicación de la Arquitectura
-> **Preguntas guía para tu redacción:**
-> - ¿Cómo interactúan el agente ReAct, la red neuronal local y las políticas internas ante una reseña ambigua?
-> - ¿Por qué la inferencia de la red neuronal se encapsula en una `@tool` y no se conecta directamente al frontend?
-> - ¿De qué manera la memoria (`MemorySaver`) previene re-ejecutar herramientas costosas en turnos consecutivos?
->
-> *(Redacta aquí tu explicación con tus propias palabras)*
+
+Para explicar la arquitectura primero explicamos el flijo del proyecto, primero el usuario ´por medio de nuestra interfaz hecha con Streamlit envia una consulta o una reseña. Luego el agente que esta basado en un grafo ReAct recibe el mensaje del usuario. Antes de que el agente procese la soplicitud se aplica un filtro de contexto que conserva 8 mensajes recientes que hace que se garantice quie el modelo opere de forma agil sin saturar su limite de tokens sin que se rompa como la idea del dialogo. Aclaramos que si el mensaje contiene un reseña que no ha sido evaluada el agente activa la herramienta de sentimiento, la cual liumpia el texto y ejecuta nuestra red neuronal local, obteniendo una prediccion compacta con su nivel de certeza. Luego el agente toma ese resultado y llama la herramienta de politicas coorporativas ´para asignar el protocolo correspondiente que puede ser entre atencion estandar, ticket prioritario o revision humana. Finalmente se resume todo en una respuesta clara para el usuario, permitioendo auditar en pantalla las herramientas utilizadas y el consumo de recursos.
+
+Una decisison importante de diseño que se tomo fue la de encapsular la red neuronal como una herramienta independiente, en lugar de conectarla directamente a ala pantalla del chat. rEsto lo hicimos porque se otorga autonomia al agente para que tome decisiones de cuandop es realmente necesario clasificar texto. Si un usuario simplemente saluda o pregunta por una política general, el agente responde directamente sin gastar recursos de cómputo en la red local.
+
+Asimismo, la memoria conversacional previene re-ejecuciones innecesarias. Si en turnos posteriores el usuario realiza preguntas de seguimiento (por ejemplo, ¿cuál fue la confianza de esa reseña?), el agente consulta directamente la información almacenada en el historial de la sesión y responde de memoria, sin tener que volver a evaluar el texto en la red neuronal ni duplicar consultas a las herramientas.
 
 ---
 
@@ -257,11 +274,10 @@ El agente dispone de dos herramientas especializadas con responsabilidades no su
    ```
 
 > ### [ESCRIBE AQUÍ (Juan Diego)] — Análisis de Diseño de Herramientas
-> **Preguntas guía para tu redacción:**
-> - ¿Qué garantiza que la `@tool #1` no se ejecute dos veces sobre la misma reseña dentro de una misma conversación?
-> - ¿Por qué la `@tool #2` acepta `sentimiento` y `confianza` opcionales en lugar de obligar al agente a inferirlos siempre?
->
-> *(Redacta aquí tu explicación con tus propias palabras)*
+
+En la elavoracion del trabajo tuvimos que tener en cuenta que para que la herramienta del sentimiento no se ejecute innecesariamente mas de una cez sobre el mismo texto implementamos una barrera tecnica. en primer lugar, el prompt del sistema y el docstring de la herramienta contienen instrucciones explícitas de exclusión que le prohíben al agente re-clasificar contenido ya procesado en la conversación. En segundo lugar, gracias a la memoria conversacional, el agente revisa el historial y detecta si ya existe una predicción previa guardada. Al confirmar que ya cuenta con el veredicto de la red neuronal, el agente salta directamente al siguiente paso (consultar la política o responder), ahorrando tiempo y evitando sobrecostos de procesamiento.
+
+Tambien, la herramienta de políticas de triaje fue diseñada como opcionales. Esto lo hicimos porque se desacopla la herramienta y le permite operar en dos escenarios muy distintos: 1. Flujo guiado por el modelo neuronal: Cuando se analiza una reseña completa, el agente envía el sentimiento y la confianza numérica devueltos por la primera herramienta, permitiendo que la política aplique reglas lógicas de certeza (activando de inmediato la revisión humana si la confianza cae por debajo del 70%). 2. Consulta normativa directa: Si un usuario o supervisor pregunta directamente por un protocolo interno (por ejemplo: ¿qué política aplica si un cliente amenaza con demandar?), no existe una reseña previa ni cifras de confianza. Al ser opcionales, la herramienta no falla ni fuerza al agente a inventar datos; simplemente busca en el catálogo de reglas mediante palabras clave y devuelve la política correspondiente
 
 ---
 
@@ -270,12 +286,16 @@ El agente dispone de dos herramientas especializadas con responsabilidades no su
 Los docstrings actúan como el manual de operaciones del planificador del LLM. Su diseño optimizado incluye directrices explícitas de activación positiva (`Usala:`) y exclusión negativa (`NO usar:`).
 
 > ### [ESCRIBE AQUÍ (Juan Diego)] — Impacto Operativo de los Docstrings
-> **Preguntas guía para tu redacción:**
-> - ¿Qué frase exacta del docstring de la `@tool #1` impidió que el modelo la invocara durante el saludo del Caso 1?
-> - ¿Qué ajuste realizamos entre la Tarea 6 y la Tarea 8 para evitar que el agente alucinara llamadas duplicadas?
-> - ¿Cómo influyó la reducción de tokens en los docstrings sobre el consumo total de contexto en turnos multi-llamada?
->
-> *(Redacta aquí tu explicación con tus propias palabras)*
+
+Encontramosque en los agentes basados en LLM, uno de los errores más comunes es la sobre-activasion de herramientas que basicamente es cuando el agente se vuelve ansioso y ejecuta herramientas ante cualquier saludo casual. Para mitigar esto, estructuramos los docstrings bajo una lógica de directrices positivas (Usala cuando...) y exclusiones negativas taxativas (NO usar...). La frase determinante en la primera herramienta fue:
+
+NO usar: saludos, preguntas de politicas o texto ya clasificado.
+
+Gracias a esta instrucción prohibitiva explícita, en el Caso 1 de evaluación el agente reconoció que ante un mensaje de cortesía (Hola, ¿en qué me puedes ayudar?) no debía invocar la red neuronal, respondiendo de inmediato con una lista vacía de herramientas y consumiendo el mínimo de recursos
+
+Entre la Tarea 6 y la Tarea 8 realizamos una depuración profunda en la redacción de los docstrings. Inicialmente eran textos largos y descriptivos que explicaban detalles internos del modelo (como capas o librerías), lo que confundía al planificador y provocaba llamadas desordenadas o duplicadas. Al sintetizarlos como contratos operativos concisos, eliminamos las alucinaciones y delimitamos claramente la frontera entre ambas herramientas: la Tool #1 solo analiza reseñas no clasificadas y la Tool #2 solo atiende reglas y políticas de triaje.
+
+Esta optimización tuvo además un impacto cuantitativo directo en el consumo de contexto. Dado que la definición de las herramientas se concatena y reenvía al modelo en cada paso intermedio del razonamiento, compactar el docstring de la Tool #1 (de 118 a 80 tokens, un 32.2% de ahorro) y el de la Tool #2 (de 199 a 181 tokens, un 9.0% de ahorro) redujo drásticamente el consumo acumulado de tokens de entrada en turnos complejos de doble llamada
 
 ---
 
@@ -315,13 +335,10 @@ if st.button("🔄 Reiniciar conversación", help="Genera un nuevo thread_id y v
 ```
 
 > ### [ESCRIBE AQUÍ (Juan Diego)] — Explicación de la Memoria y Reinicio
-> **Preguntas guía para tu redacción:**
-> - ¿Cómo demostramos empíricamente en la prueba D y E que el agente recuerda en el mismo `thread_id` y olvida al reiniciarlo?
-> - ¿Por qué almacenar el agente en `@st.cache_resource` es seguro entre múltiples usuarios que acceden simultáneamente?
-> - ¿Qué papel cumple `trim_messages` en evitar desbordamientos de contexto en conversaciones largas?
->
-> *(Redacta aquí tu explicación con tus propias palabras)*
 
+Para validar el comportamiento de la memoria conversacional implementamos dos pruebas. En la primera prueba tras clasificar una reseña en un hilo activo, le preguntamos al agente en el siguiente turno: ¿cuál fue la confianza de esa reseña?. El agente respondió con la cifra exacta devuelta por la red neuronal recuperándola directamente del historial del checkpointer sin necesidad de volver a ejecutar la herramienta. Posteriormente, en la segunda prueba que hicimops generamos un nuevo hilo y repetimos la misma pregunta; el agente respondió indicando que no contaba con contexto previo y verificamos que el nuevo hilo iniciaba en blanco, demostrando un borrado y aislamiento perfecto entre sesiones.
+
+Finalmente, para evitar desbordamientos de contexto y sobrecostos en conversaciones extensas, implementamos un recorte dinámico de historial de esta manera restringiendo la memoria a una ventana móvil de los 8 mensajes más recientes y preservando siempre el prompt del sistema. En este mecanismo, configurar el parámetro, fue un requisito crítico para la API de Gemini: si un recorte divide un mensaje del agente con llamadas a herramientas (AIMessage.tool_calls) y deja huérfano su correspondiente mensaje de respuesta (ToolMessage), Google AI Studio rechaza la petición con un error 400 (Bad Request). Al exigir allow_partial=False, LangChain solo descarta bloques completos de interacción, garantizando estabilidad total en turnos prolongados.
 ---
 
 ### 4.4 Cuidado de Tokens y Cuota
@@ -350,13 +367,12 @@ Para operar de forma sostenible dentro de la capa gratuita de Google AI Studio (
 | **TOTAL SUITE (3 turnos)** | **6,670 / 446 / 7,116** | **3,999 / 264 / 4,263** | **40.1%** |
 
 > ### [ESCRIBE AQUÍ (Juan Diego)] — Justificación de las Medidas de Ahorro
-> **Preguntas guía para tu redacción:**
-> - ¿Cuál medida de ahorro tuvo el mayor impacto cuantitativo y por qué?
-> - ¿Cómo logramos recortar el 66.6% del system prompt sin comprometer ninguna de las 6 reglas de comportamiento?
-> - ¿Por qué era crítico configurar `allow_partial=False` en el recorte de historial para la API de Gemini?
->
-> *(Redacta aquí tu explicación con tus propias palabras)*
 
+De las 9 medidas implementadas, la que generó el mayor impacto cuantitativo fue la compresión del System Prompt, el cual redujimos de 395 a solo 132 tokens (un ahorro neto del 66.6%). La razón de su enorme impacto radica en el efecto multiplicador del ciclo ReAct: mientras que los mensajes del usuario o las salidas de las herramientas solo se envían en su respectivo turno, el prompt del sistema se inyecta como prefijo obligatorio en absolutamente todas las llamadas que se hacen al LLM. En un flujo completo donde el agente primero planifica, luego invoca la Tool #1, después la Tool #2 y finalmente redacta la respuesta, el system prompt se reenvía hasta tres o cuatro veces en un solo turno de conversación. Reducir 263 tokens en esa plantilla base se traduce en miles de tokens ahorrados a lo largo de una sesión.
+
+Para lograr esta reduccion sin comprometer el comportamiento del agente eliminamos las cosas que no aportaban como la prosa, los fomralismos innecesarios y las explicaciones pedagogicas extensas. En cambio de eso resumimos las instrucciones bajo una sintaxis imperativa y contractual organizada en seis directrices estrictas: rol de triaje, prohibición de re-clasificar, condición de activación de la Tool #1, flujo de argumentos hacia la Tool #2, formato mínimo de respuesta al usuario y mandato de no corregir a la red neuronal en casos de incertidumbre. Este diseño de alta densidad semántica garantizó que el agente mantuviera un 100% de cumplimiento operativo utilizando únicamente una fracción del contexto original.
+
+Esta estrategia se complementó con límites duros en las salidas de las herramientas, obligándolas a devolver JSON compacto en una sola línea que consume un espacio mínimo en el historial. Asimismo, implementamos un limitador de ritmo en memoria a 0.25 peticiones por segundo bindando a la aplicación contra bloqueos por error HTTP 429 en la capa gratuita de Gemini. Por último, en el recorte de historial con trim_messages, el parámetro allow_partial=False fue vital: garantizó que al ahorrar tokens jamás se descartaran mensajes a medias, evitando romper la pareja indivisible entre la llamada a la herramienta y su resultado, lo que habría provocado un fallo de validación en la API. En conjunto, estas medidas lograron un ahorro global medido del 40.1% en la suite de evaluación (reduciendo de 7,116 a 4,263 tokens)
 ---
 
 ### 4.5 Matriz de Evaluación
@@ -375,13 +391,12 @@ Resultados reproducibles extraídos de [notebooks/evaluacion_agente_u5.ipynb](no
 - **Validación de trayectoria:** Determinada exclusivamente desde `AIMessage.tool_calls` a través de `herramientas_invocadas` en `src/agente.py` y verificada en `src/evaluacion.py`. Cero inspecciones sobre la respuesta final de texto.
 
 > ### [ESCRIBE AQUÍ (Juan Diego)] — Análisis de la Matriz de Evaluación
-> **Preguntas guía para tu redacción:**
-> - ¿Qué demuestra que el Caso 1 no active herramientas y el Caso 2 active solo la de políticas?
-> - ¿Cómo se garantiza en el Caso 3 que los argumentos de la `@tool #2` coincidan exactamente con la inferencia de la red local?
-> - En el Caso 4, ¿por qué fue fundamental que el sistema comunicara la baja confianza (0.5835) y derivara a moderación humana en lugar de automatizar una decisión errónea?
->
-> *(Redacta aquí tu explicación con tus propias palabras)*
 
+La diferencia entre el caso 1 y el caso 2 demuestra la capacidad de discriminacion del agnete, en el caso 1 'Hola, ¿qué puedes hacer por mí?', el agente identificó un simple saludo de bienvenida y respondió cordialmente sin activar ninguna herramienta de esta manera consumiendo un minimo de tokens de apenas 609. En cambio, en el caso 2 '¿Qué política debo aplicar si un cliente amenaza con demandar?' reconoció una consulta normativa sobre protocolos de escalamiento legal y activó exclusivamente la herramienta de políticas. Esto comprueba que el agente no opera como un script rígido que dispara herramientas por reflejo, sino que planifica selectivamente según la intención del usuario, ahorrando cómputo y preservando cuota.
+
+En el Caso 3 evaluamos el flujo neuro-agéntico completo utilizando una reseña negativa real del conjunto de prueba. El agente ejecutó de forma autónoma la secuencia requerida, primero invocó la @tool #1 para obtener la inferencia de la red local (sentimiento: 'negativo', confianza: 1.0), y acto seguido utilizó esos mismos valores como argumentos para invocar la @tool #2 (sentimiento='negative', confianza=1). La herramienta retornó la política (Ticket de insatisfacción, Prioridad Alta) y el agente estructuró una respuesta final donde comunicó fielmente tanto el sentimiento como las pautas de atención. En el notebook validamos por código mediante asserts que no existió ninguna distorsión entre lo que arrojó la red local y los argumentos recibidos por la política de triaje
+
+El Caso 4 (basado en el primer caso de fallo real: 'Not bad, but not great either...') puso a prueba el comportamiento ético y defensivo del sistema. La red neuronal predijo sentimiento negativo pero con una certeza de apenas 0.5835 (58.35%), quedando por debajo del umbral corporativo de seguridad (UMBRAL_BAJA_CONFIANZA = 0.70). En lugar de 'adivinar' o corregir al modelo por su cuenta, el agente respetó la directriz del sistema: comunicó abiertamente la baja confianza y aplicó la política (Derivar a moderación humana con prioridad media). En un servicio real de streaming, esta prudencia evita automatizar respuestas equivocadas ante clientes con quejas ambiguas. Finalmente, cabe destacar que todas las trayectorias se auditaron inspeccionando directamente los objetos estructurados y no leyendo texto libre, alcanzando un 100.0% de acierto tanto en trayectorias como en resultados (4 de 4 casos cumplidos).
 ---
 
 # Sección 5 · Bitácora de Vibe Coding y Razonamiento Crítico
@@ -408,12 +423,10 @@ Registro unificado de incidencias, errores de librerías, APIs desactualizadas y
 > *(Redacta aquí tu reflexión crítica personal con tus propias palabras)*
 
 > ### [ESCRIBE AQUÍ (Juan Diego)] — Reflexión Crítica sobre el Agente y Vibe Coding
-> **Preguntas guía para tu redacción:**
-> - ¿Por qué la supervisión humana y las pruebas automatizadas con asserts estrictos fueron indispensables para detectar los errores de la IA?
-> - ¿Qué riesgos habría implicado aceptar ciegamente la propuesta de modelo `gemini-2.0-flash` o el parche incorrecto de `AppTest`?
->
-> *(Redacta aquí tu reflexión crítica personal con tus propias palabras)*
 
+Entendimos que el desarrollo asistido por modelos generativos ofrece una velocidad impresionante para prototipar, pero que introduce un riesgo el cual consta de que genera una ilusion de que el codigo funciona simplemente por que es visualmente correcta o no arroja errores visibles a primera vista. En arquitecturas agénticas, donde intervienen modelos probabilísticos y múltiples herramientas, los errores no siempre generan excepciones de sintaxis; a menudo se manifiestan como llamadas duplicadas a APIs, omisión de directrices o consumo excesivo de contexto. En este proyecto, la supervisión humana complementada con una batería de pruebas automatizadas y asserts estrictos donde esto nos deja como unico fltro para encontrar las fallas de la IA antes de que se dañe el entorno de produccion y conyebe a multiples conflictos, y mas que la ser un trabajo colaborativo debiamos de entender cualquier decision tomada.
+
+Los incidentes documentados en nuestra bitácora evidencian los peligros que habría conllevado aceptar ciegamente las sugerencias del asistente. En primer lugar, la IA propuso utilizar el modelo gemini-2.0-flash, el cual ya se encontraba descontinuado en Google AI Studio; de no haber auditado la llamada en vivo, la aplicación habría colapsado de inmediato con un error 404 NOT_FOUND ante el evaluador. Fue necesario investigar la documentación oficial vigente, migrar a gemini-3.5-flash-lite y construir un normalizador defensivo de respuestas. En segundo lugar, al crear las pruebas de la interfaz con AppTest, la IA sugirió un decorador @patch('app_agent.responder') que resultaba inútil: como el runner de Streamlit se ejecuta en un hilo aislado, el módulo se volvía a importar en un espacio de nombres independiente, saltándose el mock y consumiendo peticiones reales a la API. De haberlo ignorado, habríamos agotado la cuota gratuita en cuestión de minutos durante las pruebas automáticas.
 ---
 
 # Sección 6 · Demostración de la Interfaz (Streamlit)
